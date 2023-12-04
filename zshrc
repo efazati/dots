@@ -74,66 +74,19 @@ function tmux_start() {
   # Change to the directory you want in each window
   tmux send-keys -t work:1 'cd ~/project/' C-m
 
-  tmux new-window -t work:2 -n 'elmeas'
-  tmux send-keys -t work:2 'cd ~/project/elmeas/' C-m
+  tmux new-window -t work:2 -n 'Home'
+  tmux send-keys -t work:2 'cd ~/' C-m
 
 
-  tmux new-window -t work:3 -n 'elmeas_adminplane'
-  tmux send-keys -t work:3 'cd ~/project/elmeas/adminplane' C-m
-
-  tmux new-window -t work:4 -n 'outmin'
-  tmux send-keys -t work:4 'cd ~/project/outmin/' C-m
+  tmux new-window -t work:3 -n 'Downloads'
+  tmux send-keys -t work:3 'cd ~/Downloads/' C-m
 
   # Attach to the session
   tmux attach-session -t work
-}
-
-export NNN_PLUG='f:finder;o:fzopen;p:preview-tabbed;d:diffs;t:nmount;v:imgview;s:suedit;j:autojump;g:gitroot;s:!bash -i*'
-${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd
-export NNN_FIFO=/tmp/nnn.fifo
-
-nnn-preview ()
-{
-    # Block nesting of nnn in subshells
-    if [ -n "$NNNLVL" ] && [ "${NNNLVL:-0}" -ge 1 ]; then
-        echo "nnn is already running"
-        return
-    fi
-
-    # The default behaviour is to cd on quit (nnn checks if NNN_TMPFILE is set)
-    # If NNN_TMPFILE is set to a custom path, it must be exported for nnn to see.
-    # To cd on quit only on ^G, remove the "export" and set NNN_TMPFILE *exactly* as this:
-    #     NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
-    export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
-
-    # This will create a fifo where all nnn selections will be written to
-    NNN_FIFO="$(mktemp --suffix=-nnn -u)"
-    export NNN_FIFO
-    (umask 077; mkfifo "$NNN_FIFO")
-
-    # Preview command
-    preview_cmd="/path/to/preview_cmd.sh"
-
-    # Use `tmux` split as preview
-    if [ -e "${TMUX%%,*}" ]; then
-        tmux split-window -e "NNN_FIFO=$NNN_FIFO" -dh "$preview_cmd"
-
-    # Use `xterm` as a preview window
-    elif (which xterm &> /dev/null); then
-        urxvt -e "$preview_cmd" &
-
-    # Unable to find a program to use as a preview window
-    else
-        echo "unable to open preview, please install tmux or xterm"
-    fi
-
-    nnn "$@"
-
-    rm -f "$NNN_FIFO"
 }
 
 export NVM_DIR="$HOME/.nvm"
 
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-. /etc/profile.d/autojump.sh
+. /usr/share/autojump/autojump.zsh
