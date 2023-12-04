@@ -1,0 +1,514 @@
+[colors]
+accent = #fba922
+
+[bar/mainscreen]
+enable-ipc = true
+monitor = DP-1
+monitor-fallback = eDP-1
+monitor-strict = true
+width = 100%
+height = 27
+
+;background = #222
+background = #1f1f1f
+foreground = #eee
+
+border-bottom = 1
+border-bottom-color = #333
+
+overline-size = 10
+overline-color = ${self.background}
+underline-size = 10
+underline-color = ${self.background}
+
+padding-left = 0
+padding-right = 0
+module-margin-left = 0 
+module-margin-right = 0
+
+font-0 = NotoSans-Regular:size=8;0
+font-1 = MaterialIcons:size=10;2
+font-2 = Termsynu:size=8;0
+font-3 = Siji:pixelsize=10;1
+font-4 = FontAwesome:size=10;0
+font-5 = sans:size=11;0
+
+modules-left = i3 xwindow
+modules-center = clocktime clock
+modules-right = 
+
+tray-position = right
+
+[bar/bott]
+enable-ipc = true
+monitor = -1
+monitor-fallback = eDP-1
+monitor-strict = true
+width = 100%
+height = 30
+
+background = #1f1f1f
+foreground = #eee
+border-top = 1
+border-top-color = #333
+
+overline-size = 10
+overline-color = ${self.background}
+underline-size = 10
+underline-color = ${self.background}
+
+padding-left = 5
+padding-right = 5
+module-margin-left = 3
+module-margin-right = 3
+
+font-0 = NotoSans-Regular:size=8;0
+font-1 = MaterialIcons:size=10;2
+font-2 = Termsynu:size=8;0
+font-3 = Siji:pixelsize=10;1
+font-4 = FontAwesome:size=10;0
+font-5 = irsans:size=11;0
+
+bottom = true 
+
+modules-left = todo
+modules-center =
+modules-right = ping docker filesystem temperature cpu memory vpn battery volume wireless-network wired-network
+
+[bar/sidebott]
+enable-ipc = true
+monitor = HDMI-1
+#monitor = DP-2
+width = 100%
+height = 30
+
+background = #1f1f1f
+foreground = #eee
+border-top = 1
+border-top-color = #333
+
+overline-size = 10
+overline-color = ${self.background}
+underline-size = 10
+underline-color = ${self.background}
+
+padding-left = 5
+padding-right = 5
+module-margin-left = 3
+module-margin-right = 3
+
+font-0 = NotoSans-Regular:size=8;0
+font-1 = MaterialIcons:size=10;2
+font-2 = Termsynu:size=8;0
+font-3 = Siji:pixelsize=10;1
+font-4 = FontAwesome:size=10;0
+font-5 = Sans:size=11;0
+
+bottom = true 
+
+modules-left = todo
+modules-center =
+modules-right = ping docker filesystem temperature cpu memory vpn battery volume wireless-network wired-network
+
+
+[bar/sidescreen]
+enable-ipc = true
+monitor = HDMI-1
+#monitor = DP-2
+width = 100%
+height = 27
+
+;background = #222
+background = #1f1f1f
+foreground = #eee
+
+border-bottom = 1
+border-bottom-color = #333
+
+overline-size = 10
+overline-color = ${self.background}
+underline-size = 10
+underline-color = ${self.background}
+
+padding-left = 0
+padding-right = 0
+module-margin-left = 0 
+module-margin-right = 0
+
+font-0 = NotoSans-Regular:size=8;0
+font-1 = MaterialIcons:size=10;2
+font-2 = Termsynu:size=8;0
+font-3 = Siji:pixelsize=10;1
+font-4 = FontAwesome:size=10;0
+font-5 = sans:size=11;0
+
+modules-left = i3 xwindow
+modules-center = clocktime clock
+modules-right = 
+tray-position = right
+
+
+[module/fs-root]
+type = internal/fs
+1ount-0 = /
+label-mounted = %{F#e60053}%percentage_used%%%{F-} used of %mountpoint%
+
+
+[module/xbacklight]
+type = internal/xbacklight
+output = eDP-1
+format = <ramp> <bar>
+
+ramp-0 = 
+ramp-0-foreground = #666
+ramp-1 = 
+ramp-1-foreground = #999
+ramp-2 = 
+ramp-2-foreground = #fff
+
+bar-width = 12
+bar-indicator = |
+bar-indicator-font = 6
+bar-indicator-foreground = #bbffffff
+bar-fill = ─
+bar-fill-font = 6
+bar-fill-foreground = #9f78e1
+bar-empty = ─
+bar-empty-font = 6
+bar-empty-foreground = #44
+
+[module/todo]
+type = custom/script
+exec = ~/.config/polybar/scripts/todo.sh
+interval = 30
+label-font = 5
+label = ➤ %output%
+#click-left = "bash ~/.config/i3/todo.sh"
+
+[module/backlight]
+type = internal/backlight
+card = intel_backlight
+format = <ramp> <label>
+ramp-0 = 0
+ramp-1 = 1
+ramp-2 = 2
+ramp-foreground = #666
+interactive = true
+
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+pin-workspaces = true
+
+;label-dimmed-underline = ${root.background}
+
+label-focused = %name% 
+label-focused-foreground = #f3f3f3
+label-focused-background = #df8787
+;label-focused-underline = #${colors.accent}
+;label-focused-underline = #df8787
+label-focused-font = 4
+label-focused-padding = 4
+
+label-unfocused = %name% 
+label-unfocused-background = #3f3f3f
+label-unfocused-underline = #3f3f3f
+label-unfocused-font = 4
+label-unfocused-padding = 4
+
+label-urgent = %name%
+label-urgent-foreground = #000000
+label-urgent-background = #bd2c40
+label-urgent-underline = #9b0a20
+label-urgent-font = 4
+label-urgent-padding = 4
+
+label-visible = %name%
+label-visible-foreground = #55ffffff
+label-visible-font = 4
+label-visible-padding = 4
+
+[module/cpu]
+type = internal/cpu
+interval = 1.5
+
+format = <label> <ramp-coreload>
+
+label = 
+label-font = 3
+label-foreground = #99
+
+ramp-coreload-0 = ▁
+ramp-coreload-0-font = 2
+ramp-coreload-0-foreground = #aaff77
+ramp-coreload-1 = ▂
+ramp-coreload-1-font = 2
+ramp-coreload-1-foreground = #aaff77
+ramp-coreload-2 = ▃
+ramp-coreload-2-font = 2
+ramp-coreload-2-foreground = #aaff77
+ramp-coreload-3 = ▄
+ramp-coreload-3-font = 2
+ramp-coreload-3-foreground = #aaff77
+ramp-coreload-4 = ▅
+ramp-coreload-4-font = 2
+ramp-coreload-4-foreground = #fba922
+ramp-coreload-5 = ▆
+ramp-coreload-5-font = 2
+ramp-coreload-5-foreground = #fba922
+ramp-coreload-6 = ▇
+ramp-coreload-6-font = 2
+ramp-coreload-6-foreground = #ff5555
+ramp-coreload-7 = █
+ramp-coreload-7-font = 2
+ramp-coreload-7-foreground = #ff5555
+
+[module/memory]
+type = internal/memory
+interval = 2
+format = <ramp-used> <label> 
+label =  %percentage_used%%
+
+ramp-used-0 = %{F#00FF00}
+ramp-used-1 = %{F#FFAA00}
+ramp-used-2 = %{F#FF0000}
+
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+
+mount-0 = /
+
+label-mounted =   %percentage_used%%
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = #66
+
+[module/clocktime]
+type = custom/script
+exec = ~/.config/polybar/scripts/time.sh
+interval = 10
+label = %output%
+format-padding = 5
+format-background = #000                                                                                                                                                                   
+format-foreground = #fff
+
+[module/spotify]
+type = custom/script
+exec = python ~/.config/polybar/scripts/spotify.py
+interval = 1
+label = %output%
+
+[module/crypto]
+type = custom/script
+exec = python3 ~/.config/polybar/scripts/pro_crypto.py
+interval = 60
+label = %output%
+click-left = "xdg-open http://pro.coinbase.com/"
+font-0 = "MaterialIcons:size=10;2"
+
+[module/docker]
+type = custom/script
+exec = docker ps -q | wc -l
+interval = 1
+label =  %output%
+
+[module/temperature]
+type = internal/temperature
+thermal-zone = 5
+warn-temperature = 75
+
+format = <label>
+;format-underline = #f50a4d
+format-warn = <label-warn>
+;format-warn-underline = ${self.format-underline}
+
+label = %temperature% 
+label-warn = HOT! %temperature%
+label-warn-foreground = #f00
+
+[module/wireless-network]
+type = internal/network
+interface = wlp0s20f3
+interval = 2.0
+ping-interval = 10
+
+format-connected =  <ramp-signal> <label-connected> 
+label-connected = %essid%:%local_ip%:%downspeed% 
+label-disconnected = 
+label-disconnected-foreground = #66
+
+ramp-signal-0 = 10%
+ramp-signal-1 = 20%
+ramp-signal-2 = 50%
+ramp-signal-3 = 70%
+ramp-signal-4 = 100%
+
+
+[module/wired-network]
+type = internal/network
+interface = enp4s0
+interval = 2.0
+
+label-connected =  %local_ip%:%downspeed%
+label-disconnected = 
+label-disconnected-foreground = #66
+
+[module/vpn]
+type = custom/script
+exec = ~/.config/polybar/scripts/vpn.sh
+interval = 5
+
+
+[module/up-speed]
+inherit = module/wired-network
+
+label-connected = %{T2}%upspeed:9%%{T-}
+
+[module/down-speed]
+inherit = module/wired-network
+
+label-connected = %{T2}%downspeed:9%%{T-}
+label-padding-left = 0
+
+
+[module/ping]
+type = custom/script
+exec = ~/.config/polybar/scripts/ping.sh
+interval = 5
+label =  %output%
+
+[module/mpd]
+type = internal/mpd
+format-online = <bar-progress>  <icon-prev> <icon-stop> <toggle> <icon-next>  <label-song>
+format-online-overline = ${root.background}
+format-online-underline = ${root.background}
+format-offline = <label-offline>
+label-offline = mpd is off
+
+icon-play = 
+icon-pause = 
+icon-stop = 
+icon-prev = 
+icon-next = 
+icon-random = 
+icon-repeat = 
+
+toggle-on-foreground =
+toggle-off-foreground = #55
+
+bar-progress-width = 45
+bar-progress-format = %{+o +u}%fill%%{-o -u}%indicator%%{+o +u}%empty%%{-u -o}
+; bar-progress-indicator = |
+bar-progress-indicator = █
+bar-progress-indicator-foreground = #ff
+bar-progress-indicator-font = 3
+; bar-progress-fill = ─
+bar-progress-fill = █
+bar-progress-fill-foreground = #bb
+bar-progress-fill-font = 3
+; bar-progress-empty = ─
+bar-progress-empty = ▒
+bar-progress-empty-font = 3
+bar-progress-empty-foreground = #44
+
+[module/clock]
+type = internal/date
+interval = 5
+format-padding = 5
+format-background = #000
+format-foreground = #fff
+date = %%{F#bb}%Y-%m-%d%%{F-}    
+
+[module/volume]
+type = internal/volume
+
+format-volume = <ramp-volume> <label-volume>
+label-muted = 
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+
+
+
+[module/battery]
+type = internal/battery
+full-at = 98
+
+format-charging = <animation-charging> <label-charging>
+format-discharging = <ramp-capacity> <label-discharging>
+format-full = <ramp-capacity> <label-full>
+
+ramp-capacity-0 = 
+ramp-capacity-0-foreground = #f53c3c
+ramp-capacity-1 = 
+ramp-capacity-1-foreground = #ffa900
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+
+bar-capacity-width = 10
+bar-capacity-format = %{+u}%{+o}%fill%%empty%%{-u}%{-o}
+bar-capacity-fill = █
+bar-capacity-fill-foreground = #ddffffff
+bar-capacity-fill-font = 3
+bar-capacity-empty = █
+bar-capacity-empty-font = 3
+bar-capacity-empty-foreground = #44ffffff
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-framerate = 750
+
+
+[module/xwindow]
+type = internal/xwindow
+label-maxlen = 100
+label-foreground = #bbb
+label-font = 5
+label-margin = 5
+module-margin = 15
+padding-left = 5
+
+[module/powermenu]
+type = custom/menu
+
+format-padding = 3
+format-background = #000
+format-foreground = #fff
+
+label-open = Sasd
+label-close = 
+label-separator = " - "
+
+menu-0-0 = Terminate WM
+menu-0-0-foreground = ${colors.accent}
+menu-0-0-exec = bspc quit -1
+menu-0-1 = Reboot
+menu-0-1-foreground = ${colors.accent}
+menu-0-1-exec = menu-open-1
+menu-0-2 = Power off
+menu-0-2-foreground = ${colors.accent}
+menu-0-2-exec = menu-open-2
+
+menu-1-0 = Cancel
+menu-1-0-foreground = ${colors.accent}
+menu-1-0-exec = menu-open-0
+menu-1-1 = Reboot
+menu-1-1-foreground = ${colors.accent}
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = Power off
+menu-2-0-foreground = ${colors.accent}
+menu-2-0-exec = sudo poweroff
+menu-2-1 = Cancel
+menu-2-1-foreground = ${colors.accent}
+menu-2-1-exec = menu-open-0
+
+; vim:ft=dosini
+

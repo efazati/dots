@@ -1,0 +1,5 @@
+#!/bin/bash
+ ~/bin/screen/default.sh
+setxkbmap -option grp:switch,grp:alt_shift_toggle,grp_led:scroll us,ir
+
+feh --bg-fill ~/Pictures/background/wallpaper-base.jpg

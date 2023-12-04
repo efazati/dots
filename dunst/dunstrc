@@ -1,0 +1,62 @@
+[global]
+monitor = 0
+follow = mouse
+geometry = "300x60-20+48"
+indicate_hidden = yes
+shrink = no
+separator_height = 0
+padding = 12
+horizontal_padding = 12
+frame_width = 2
+sort = no
+idle_threshold = 120
+font = rissole 8
+line_height = 4
+markup = full
+format = %s\n%b
+alignment = left
+show_age_threshold = 60
+word_wrap = yes
+ignore_newline = no
+stack_duplicates = false
+hide_duplicate_count = yes
+show_indicators = no
+icon_position = off
+sticky_history = yes
+history_length = 20
+browser = /usr/bin/firefox -new-tab
+always_run_script = true
+title = Dunst
+class = Dunst
+
+# Align icons left/right/off
+icon_position = off
+max_icon_size = 80
+
+# Paths to default icons.
+icon_path = /usr/share/icons/Adwaita/16x16/mimetypes/:/usr/share/icons/Adwaita/48x48/status/:/usr/share/icons/Adwaita/16x16/devices/:/usr/share/icons/Adwaita/48x48/notifications/:/usr/share/icons/Adwaita/48x48/emblems/
+
+
+[shortcuts]
+close = ctrl+space
+close_all = ctrl+shift+space
+history = ctrl+grave
+context = ctrl+shift+period
+
+[urgency_low]
+timeout = 4
+background = "#141c21"
+foreground = "#93a1a1"
+frame_color = "#8bc34a"
+
+[urgency_normal]
+timeout = 8
+background = "#141c21"
+foreground = "#93a1a1"
+frame_color = "#df8787"
+
+[urgency_critical]
+timeout = 0
+background = "#141c21"
+foreground = "#93a1a1"
+frame_color = "#ba68c8"

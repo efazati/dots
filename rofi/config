@@ -1,0 +1,6 @@
+#rofi.theme: /usr/share/rofi/themes/gruvbox-dark-soft.rasi
+rofi.theme: /home/efazati/.config/rofi/theme.slate.rasi
+rofi.opacity: 80
+rofi.line: 8
+rofi.terminal: urxvt
+
