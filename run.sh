@@ -12,3 +12,6 @@ ln -s $(realpath ./Xresources) ~/.Xresources
 ln -s $(realpath ./zshrc) ~/.zshrc
 ln -s $(realpath ./vimrc) ~/.vimrc
 ln -s $(realpath ./tmux.conf) ~/.tmux.conf
+
+mkdir -p ~/bin/screen  
+ln -s /home/efazati/.screenlayout/1mon.sh ~/bin/screen/default.sh
