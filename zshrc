@@ -85,6 +85,11 @@ function tmux_start() {
   tmux attach-session -t work
 }
 
+# Check if .zshrc.personal exists and source it
+if [[ -f ~/.zshrc.personal ]]; then
+    source ~/.zshrc.personal
+fi
+
 export NVM_DIR="$HOME/.nvm"
 
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

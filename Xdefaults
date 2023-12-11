@@ -1,21 +1,30 @@
-#URxvt.termName: rxvt-256color
+URxvt.perl-ext: tabbedalt,font-size,default,matcher,keyboard-select
+
+! URxvt.termName: rxvt-256color
 URxvt.background: black
 URxvt.foreground: white
-#URxvt.transparent: true
+! URxvt.transparent: true
 
 URxvt.scrollBar: false
 URxvt.scrollWithBuffer: true
 
 URxvt.font: xft:monaco:size=12
-#URxvt.font: xft:monospace:antialias=true:pixelsize=14
-# URxvt.font: xft:VictorMonoNerdFontMono-regular.ttf:pixelsize=18
-URxvt.url-select.underline: true
-URxvt.url-select.launcher: /usr/bin/xdg-open
+! URxvt.font: xft:monospace:antialias=true:pixelsize=14
+! URxvt.font: xft:VictorMonoNerdFontMono-regular.ttf:pixelsize=18
 
-URxvt.perl-ext: tabbedalt,font-size,default,matcher
+URxvt.keysym.M-Left:    \033[1;5D
+URxvt.keysym.M-Right:    \033[1;5C
+
 URxvt.tabbedalt.new-button: false
 URxvt.tabbedalt.tab-numbers: false
 URxvt.keysym.Control-t: tabbedalt:new_tab
+! URxvt.tabbedalt.disable-default-keys: true
+! URxvt.keysym.M-Right: tabbedalt:move_tab_left
+! URxvt.keysym.M-Left: tabbedalt:move_tab_left
+
+URxvt.url-select.underline: true
+urxvt.urlLauncher: /usr/bin/firefox
+URxvt.url-select.launcher: firefox
 
 URxvt.color1: #df8787
 URxvt.color9: #df8787
@@ -26,18 +35,14 @@ URxvt.color12: #00afff
 
 URxvt.iso14755: false
 URxvt.iso14755_52: false
-# urxvt.transparent: true
-# urxvt.shading: 30
+! urxvt.transparent: true
+! urxvt.shading: 30
 ! urxvt.fading:           10 
 ! urxvt.fadeColor:        #ffffff 
 URxvt.geometry: 400x400
 
 urxvt.saveLines: 1000000
-urxvt.urlLauncher: /usr/bin/firefox
-URxvt.url-select.launcher: firefox
 
-URxvt.keysym.C-Down:  resize-font:smaller
-URxvt.keysym.C-Up:    resize-font:bigger
 
 URxvt.keysym.C-Up:     font-size:increase
 URxvt.keysym.C-Down:   font-size:decrease
