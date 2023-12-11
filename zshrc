@@ -2,7 +2,17 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="jonathan"
-plugins=(git)
+plugins=(
+  sudo
+  git
+  git-auto-fetch
+  # zsh-autosuggestions
+  # zsh-navigation-tools
+  docker
+  docker-compose
+  kubectl
+  helm
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -22,13 +32,14 @@ alias nano='vim'
 alias wget='wget -c'
 alias tailf='tail -f'
 alias apt='sudo apt'
+alias h='history -i'
+alias hs='history | grep'
 
 alias pm='sudo pacman' 
 alias p='paru'
 alias clip="xclip -sel clip"
 
 
-alias k="kubectl"
 alias k8="kubectl"
 alias k8s="kubectl"
 alias kp="title Pods; kubectl get pods -A --field-selector=metadata.namespace!=kube-system"
