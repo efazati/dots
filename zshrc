@@ -6,8 +6,10 @@ plugins=(
   sudo
   git
   git-auto-fetch
-  # zsh-autosuggestions
-  # zsh-navigation-tools
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  fast-syntax-highlighting
+  zsh-autocomplete
   docker
   docker-compose
   kubectl

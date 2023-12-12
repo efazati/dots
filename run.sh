@@ -15,3 +15,6 @@ ln -s $(realpath ./tmux.conf) ~/.tmux.conf
 
 mkdir -p ~/bin/screen  
 ln -s /home/efazati/.screenlayout/1mon.sh ~/bin/screen/default.sh
+
+sudo apt install -y fonts-font-awesome
+sudo apt install zsh-autosuggestions zsh-syntax-highlighting zsh
