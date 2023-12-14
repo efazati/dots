@@ -6,7 +6,7 @@ plugins=(
   sudo
   git
   git-auto-fetch
-  zsh-autosuggestions
+  # zsh-autosuggestions
   zsh-syntax-highlighting
   fast-syntax-highlighting
   zsh-autocomplete
