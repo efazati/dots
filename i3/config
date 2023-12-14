@@ -326,7 +326,7 @@ set $darkwhite #D3D7CF
 #}
 
 
-# exec --no-startup-id ~/.config/i3/i3rc
+exec --no-startup-id ~/.config/i3/i3rc
 
 for_window [class="jetbrains-goland"] layout tabbed
 for_window [class="Goland"] layout tabbed
