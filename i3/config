@@ -147,8 +147,8 @@ bindsym $mod+F7 exec --no-startup-id bash ~/bin/screen/default.sh
 #bindsym $mod+Shift+F2 exec bingpic.sh
 
 #bindsym $mod+l exec /bin/lock
-bindsym $mod+l exec i3lock -t -i ~/Pictures/lock.png
-bindsym $mod+$mark+q exec i3lock -t -i ~/Pictures/lock.png
+bindsym $mod+l exec i3lock -t -i ~/images/lock.png
+bindsym $mod+$mark+q exec i3lock -t -i ~/images/lock.png
 
 bindsym $mod+t exec firefox --new-tab --url google.com
 
@@ -401,5 +401,3 @@ exec --no-startup-id "sunsama"
 # exec --no-startup-id "signal"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock
-
-#exec --no-startup-id ~/bin/screen/default.sh
