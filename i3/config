@@ -1,5 +1,6 @@
 set $mod Mod4
 set $mark Ctrl
+set $alt Mod1
 set $screen1 DisplayPort-1
 set $screen0 DisplayPort-0 #prim
 
@@ -117,7 +118,8 @@ bindsym $mod+Return exec urxvt
 bindsym $mod+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+space exec --no-startup-id rofi -show run
+bindsym $mod+space exec --no-startup-id rofi -show drun -show-icons
+bindsym $alt+Tab exec --no-startup-id rofi -show window -show-icons
 #bindsym $mod+$mark+space exec --no-startup-id rofi  -show trans_ -modi trans_:~/.config/rofi/translate.py 
 bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy::~/.config/rofi/handy.py
 #bindsym $mod+$mark+space exec --no-startup-id rofi_verbose
@@ -173,8 +175,11 @@ bindsym $mod+Shift+Right move right
 # enter fullscreen mode for the focused container
 bindsym $mod+$mark+x fullscreen
 
+bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+z workspace back_and_forth
-bindsym $mod+Shift+v move container to workspace back_and_forth
+bindsym $mod+v move container to workspace back_and_forth
+bindsym $mod+comma  move workspace to output up
+bindsym $mod+period move workspace to output left
 
 # change container layout (stacked, tabbed, default)
 #bindsym $mod+s layout stacking
@@ -218,9 +223,6 @@ bindsym $mod+a focus parent
 bindsym $mod+$mark+Right workspace next
 bindsym $mod+$mark+Left workspace prev
 
-
-bindsym $mod+comma  move workspace to output up
-bindsym $mod+period move workspace to output down
 # reload the configuration file
 #bindsym $mod+Shift+C reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
@@ -326,7 +328,6 @@ set $darkwhite #D3D7CF
 #}
 
 
-exec --no-startup-id ~/.config/i3/i3rc
 
 for_window [class="jetbrains-goland"] layout tabbed
 for_window [class="Goland"] layout tabbed
@@ -357,6 +358,7 @@ for_window [class="Yad"] floating enable, focus
 # focus_follows_mouse no
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec_always --no-startup-id ~/.config/i3/i3rc
 
 focus_follows_mouse yes
 

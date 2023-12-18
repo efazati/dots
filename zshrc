@@ -79,6 +79,7 @@ alias gch='git checkout'
 alias gchb='git checkout -'
 alias gdev='git checkout dev'
 alias gmain='git checkout main'
+alias gmaster='git checkout master'
 
 
 function tmux_start() {

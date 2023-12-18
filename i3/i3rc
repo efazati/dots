@@ -2,6 +2,9 @@
 # ~/bin/screen/default.sh
 setxkbmap -option grp:switch,grp:alt_shift_toggle,grp_led:scroll us,ir
 
-~/.config/polybar/launch.sh
+feh --bg-fill $HOME/images/bg.jpg &
 
-feh --bg-fill ~/images/bg.jpg &
+while true; do
+    xdotool behave_screen_edge bottom-right key Super_L+shift+space
+    sleep 1  # This adds a 1 second pause before the command runs again
+done
