@@ -36,6 +36,7 @@ alias tailf='tail -f'
 alias apt='sudo apt'
 alias h='history -i'
 alias hs='history | grep'
+alias psa='ps aux | grep'
 
 alias pm='sudo pacman' 
 alias p='paru'
@@ -98,6 +99,27 @@ function tmux_start() {
   # Attach to the session
   tmux attach-session -t work
 }
+
+smash () {
+    local T_PROC=$1
+    local T_PIDS=($(pgrep -i "$T_PROC"))
+    if [[ "${#T_PIDS[@]}" -ge 1 ]]; then
+        echo "Found the following processes:"
+        for pid in "${T_PIDS[@]}"; do
+            echo "$pid" "$(ps -p "$pid" -o comm= | awk -F'/' '{print $NF}')" | column -t
+            echo "Killing ${pid}..."
+            ( kill -15 "$pid" ) && continue
+            sleep 2
+            ( kill -2 "$pid" ) && continue
+            sleep 2
+            ( kill -1 "$pid" ) && continue
+            echo "What the hell is this thing?" >&2 && return 1
+        done
+    else
+        echo "No processes found for: $1" >&2 && return 1
+    fi
+}
+
 
 # Check if .zshrc.personal exists and source it
 if [[ -f ~/.zshrc.personal ]]; then

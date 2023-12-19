@@ -119,8 +119,8 @@ bindsym $mod+q kill
 
 # start dmenu (a program launcher)
 bindsym $mod+space exec --no-startup-id rofi -show drun -show-icons
-bindsym $alt+Tab exec --no-startup-id rofi -show window -show-icons
-#bindsym $mod+$mark+space exec --no-startup-id rofi  -show trans_ -modi trans_:~/.config/rofi/translate.py 
+bindsym $alt+Tab exec --no-startup-id rofi -show window -show-iconsalt
+#bindsym $mod+$mark+space exec --no-startup-id rofi  -show trans_ -modi trans_:alt~/.config/rofi/translate.py 
 bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy::~/.config/rofi/handy.py
 #bindsym $mod+$mark+space exec --no-startup-id rofi_verbose
 #bindsym $mod+space exec --no-startup-id dmenu_run
