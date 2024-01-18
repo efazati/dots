@@ -53,7 +53,9 @@ alias ki="title Ingress; kubectl get ingress -A; kubectl-ingressroute-hosts;"
 alias kubectl-ingressroute-hosts='title IngressRoute;kubectl get ingressroute -A -o jsonpath="{range .items[*]}{.metadata.namespace} {.metadata.name} {.spec.routes[*].match}{\"\n\"}{end}" | awk "{printf \"%-40s %-40s %-40s\n\", \$1, \$2, \$3}"'
 alias kimage="title Image; kp -o jsonpath=\"{.items[*].spec.containers[*].image}\" | tr -s '[[:space:]]' '\n' | sort | uniq -c"
 alias kpod="kubectl describe pod"
+alias kdep="kubectl describe deployment"
 alias ksvc="kubectl describe service"
+alias ksec='() { kubectl get secret/$1 -o go-template='"'"'{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'"'"' ; }'
 alias kctx="kubectl config get-contexts"
 alias kprod="kubectl config use-context prod"
 alias kstg="kubectl config use-context stg"
@@ -81,7 +83,8 @@ alias gchb='git checkout -'
 alias gdev='git checkout dev'
 alias gmain='git checkout main'
 alias gmaster='git checkout master'
-
+alias gempty='git commit --allow-empty -m "Empty-Commit"'
+alias fmt='terraform fmt -recursive . && git add -A && git commit -m "FMT" && git push'
 
 function tmux_start() {
   tmux new-session -d -s work
