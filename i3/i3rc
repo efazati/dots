@@ -4,8 +4,8 @@ setxkbmap -option grp:switch,grp:alt_shift_toggle,grp_led:scroll us,ir
 
 feh --bg-fill $HOME/images/bg.jpg &
 
-while true; do
-    killall xdotool
-    sleep 1
-    xdotool behave_screen_edge bottom-right key alt+Tab
-done
+# while true; do
+#     killall xdotool
+#     sleep 1
+#     xdotool behave_screen_edge bottom-right key alt+Tab
+# done
