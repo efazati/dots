@@ -48,6 +48,8 @@ alias k8s="kubectl"
 alias kp="title Pods; kubectl get pods -A --field-selector=metadata.namespace!=kube-system"
 alias kd="title Deployments; kubectl get deployment -A --field-selector=metadata.namespace!=kube-system"
 alias ks="title Services; kubectl get svc -A --field-selector=metadata.namespace!=kube-system"
+alias kn="title Nodes; kubectl get nodes -o wide"
+alias ke="title Nodes; kubectl get events -A"
 alias kl="kubectl logs -f --tail 100"
 alias ki="title Ingress; kubectl get ingress -A; kubectl-ingressroute-hosts;"
 alias kubectl-ingressroute-hosts='title IngressRoute;kubectl get ingressroute -A -o jsonpath="{range .items[*]}{.metadata.namespace} {.metadata.name} {.spec.routes[*].match}{\"\n\"}{end}" | awk "{printf \"%-40s %-40s %-40s\n\", \$1, \$2, \$3}"'
