@@ -30,3 +30,5 @@ sudo chmod 777 /etc/wireguard
 
 # INSERT_YOUR_USERNAME ALL = (root) NOPASSWD: /usr/bin/wg-quick
 # /etc/sudoers.d/wiregaurd
+
+# sudo ln -s /opt/Synergy/synergy /usr/local/bin

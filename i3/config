@@ -400,6 +400,6 @@ exec --no-startup-id "todoist"
 exec --no-startup-id "obsidian"
 exec --no-startup-id "synergy"
 exec --no-startup-id "sunsama"
-# exec --no-startup-id "signal"
+exec --no-startup-id "xfce4-clipman"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock
