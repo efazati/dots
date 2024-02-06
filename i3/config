@@ -379,6 +379,12 @@ for_window [class="Spotify"] floating enable, resize set 900px 610px
 bindsym $mod+$mark+m exec --no-startup-id spotify
 bindsym $mod+Shift+m exec "urxvt -e sh -c 'bash ~/bin/spotify/lyrics.sh spotify; fish'"
 
+## PulseAudio Volume Control
+bindsym $mod+p [con_mark="pulseaudio"] scratchpad show
+for_window [class="Pavucontrol"] mark "pulseaudio", move scratchpad
+for_window [class="Pavucontrol"] floating enable, resize set 900px 610px
+bindsym $mod+$mark+p exec --no-startup-id pavucontrol
+
 ## Move anything to scratchpad
 #bindsym $mod+$mark+o mark "alpha", move scratchpad
 #bindsym $mod+o [con_mark="alpha"] scratchpad show
