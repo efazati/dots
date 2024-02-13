@@ -66,8 +66,8 @@ alias kstg="kubectl config use-context stg"
 #alias d='docker'
 alias dps='title "Docker PS"; docker ps -a'
 alias dim='title "Docker Images"; docker images'
-alias dkill='docker kill (docker ps -q)'
-
+alias dkill='docker kill $(docker ps -q)'
+alias dclean='docker rmi -f $(docker images -aq)'
 
 #alias g='git'
 alias gc='git clone'

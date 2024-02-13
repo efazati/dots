@@ -32,3 +32,6 @@ sudo chmod 777 /etc/wireguard
 # /etc/sudoers.d/wiregaurd
 
 # sudo ln -s /opt/Synergy/synergy /usr/local/bin
+
+
+# git lxappearance

@@ -5,10 +5,10 @@ bash ~/.screenlayout/2mon-wacom.sh
 # get the list of devices and their respective IDs
 devices=$(xsetwacom --list devices | awk -F 'id: ' '{ print $2 }' | awk '{ print $1 }')
 
-# loop through the list of devices and perform the necessary operations
+# loop through the list of devices and perform the necessary operations WIDTHxHEIGHT+X+Y
 for id in $devices
 do
-    xsetwacom set $id MapToOutput 1920x1080+0+1080
+    xsetwacom set $id MapToOutput 1920x1080+0+0
 done
 
 # get the id of the device that has "Pad pad" in its name
