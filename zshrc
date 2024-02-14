@@ -6,8 +6,8 @@ plugins=(
   sudo
   git
   git-auto-fetch
-  # zsh-autosuggestions
-  zsh-syntax-highlighting
+#   zsh-autosuggestions
+#   zsh-syntax-highlighting
   fast-syntax-highlighting
   zsh-autocomplete
   docker
@@ -131,6 +131,7 @@ if [[ -f ~/.zshrc.personal ]]; then
     source ~/.zshrc.personal
 fi
 
+bindkey '\t' menu-complete "$terminfo[kcbt]" reverse-menu-complete
 export NVM_DIR="$HOME/.nvm"
 
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
