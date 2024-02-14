@@ -385,6 +385,12 @@ for_window [class="Pavucontrol"] mark "pulseaudio", move scratchpad
 for_window [class="Pavucontrol"] floating enable, resize set 900px 610px
 bindsym $mod+$mark+p exec --no-startup-id pavucontrol
 
+# Chat-GPT Desktop App
+bindsym $mod+c [con_mark="chatgpt"] scratchpad show
+for_window [class="Chat-gpt"] mark "chatgpt", move scratchpad
+for_window [class="Chat-gpt"] floating enable, resize set 900px 610px
+bindsym $mod+Shift+c exec --no-startup-id chat-gpt
+
 ## Move anything to scratchpad
 #bindsym $mod+$mark+o mark "alpha", move scratchpad
 #bindsym $mod+o [con_mark="alpha"] scratchpad show
