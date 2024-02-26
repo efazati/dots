@@ -20,6 +20,8 @@ source $ZSH/oh-my-zsh.sh
 
 export EDITOR=vim
 
+alias oplogin='eval $(op signin)'
+
 alias line="printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -"
 alias title="bash -c 'printf \"%30s\\n\" \"\" | tr \" \" - && echo -e \"\\e[1m\$1\\e[0m\" && printf \"%30s\\n\" \"\" | tr \" \" -' bash"
 alias showline="bash -c 'printf \"%*s\\n\" \"\${COLUMNS:-\$(tput cols)}\" \"\" | tr \" \" - && echo -e \"\\e[1m\$1\\e[0m\" && printf \"%*s\\n\" \"\${COLUMNS:-\$(tput cols)}\" \"\" | tr \" \" -' bash"
