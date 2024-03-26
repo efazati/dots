@@ -1,30 +1,96 @@
 #!/bin/bash
 
+sudo apt update
+
+sudo apt install -y \
+    i3 \
+    curl \
+    zsh \
+    feh \
+    git \
+    rxvt-unicode \
+    htop \
+    polybar \
+    rofi \
+    tmux \
+    fonts-font-awesome \
+    zsh-autosuggestions \
+    zsh-syntax-highlighting \
+    thunar \
+    arandr \
+    lxappearance \
+    vim \
+    bat \
+    autojump \
+    xfce4-clipman \
+    xfce4-screenshooter \
+    xclip \
+    x11vnc \
+    wireguard \
+    wireguard-tools \
+    vagrant \
+    tigervnc-viewer \
+    samba \
+    samba-vfs-modules \
+    rxvt-unicode \
+    git \
+    remmina \
+    psensor \
+    zenity \
+    zip \
+    suckless-tools \
+    hwinfo \
+    htop \
+    fonts-noto-color-emoji \
+    fonts-noto-core \
+    flatpak \
+    evince \
+    blueman \
+    bluez \
+    pavucontrol 
+
+sudo chsh efazati -s /bin/zsh
+
+mkdir -p $HOME/.fonts/
+cp ./fonts/monaco.ttf $HOME/.fonts/
+fc-cache -fv
+
+OH_ZSH_PATH="$HOME/.oh-my-zsh"
+ZSH= sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 # Config folder
-ln -s $(realpath ./i3) ~/.config/
-ln -s $(realpath ./polybar) ~/.config/
-ln -s $(realpath ./rofi) ~/.config/
-ln -s $(realpath ./dunst) ~/.config/
-ln -s $(realpath ./tmux) ~/.tmux
-ln -s $(realpath ./images) ~/images
+ln -s $(realpath ./i3) $HOME/.config/
+ln -s $(realpath ./polybar) $HOME/.config/
+ln -s $(realpath ./rofi) $HOME/.config/
+ln -s $(realpath ./dunst) $HOME/.config/
 
-ln -s $(realpath ./Xdefaults) ~/.Xdefaults
-ln -s $(realpath ./Xresources) ~/.Xresources
-ln -s $(realpath ./zshrc) ~/.zshrc
-ln -s $(realpath ./vimrc) ~/.vimrc
-ln -s $(realpath ./tmux.conf) ~/.tmux.conf
+rm -rf $HOME/.urxvt
+ln -s $(realpath ./urxvt) $HOME/.urxvt
+rm -rf $HOME/.tmux
+ln -s $(realpath ./tmux) $HOME/.tmux
+rm -rf $HOME/images
+ln -s $(realpath ./images) $HOME/images
 
-mkdir -p ~/bin/screen  
-ln -s /home/efazati/.screenlayout/1mon.sh ~/bin/screen/default.sh
+ln -s $(realpath ./Xdefaults) $HOME/.Xdefaults
+ln -s $(realpath ./Xresources) $HOME/.Xresources
+ln -s $(realpath ./vimrc) $HOME/.vimrc
+ln -s $(realpath ./tmux.conf) $HOME/.tmux.conf
 
-sudo apt install -y fonts-font-awesome
-sudo apt install zsh-autosuggestions zsh-syntax-highlighting zsh
+rm -rf $HOME/.zshrc
+ln -s $(realpath ./zshrc) $HOME/.zshrc
+
+mkdir -p $HOME/bin/screen
+ln -s /home/efazati/.screenlayout/1mon.sh $HOME/bin/screen/default.sh
 
 
-git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
-git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
-git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $ZSH_CUSTOM/plugins/zsh-autocomplete
+sudo chmod a+rw $OH_ZSH_PATH
+
+git clone https://github.com/zsh-users/zsh-autosuggestions.git $OH_ZSH_PATH/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $OH_ZSH_PATH/plugins/zsh-syntax-highlighting
+git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${OH_ZSH_PATH:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
+git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $OH_ZSH_PATH/plugins/zsh-autocomplete
+
+chmod 755 $HOME/.oh-my-zsh/plugins/*
 
 sudo chmod 777 /etc/wireguard 
 
@@ -33,5 +99,22 @@ sudo chmod 777 /etc/wireguard
 
 # sudo ln -s /opt/Synergy/synergy /usr/local/bin
 
+git clone --depth=1 https://github.com/tfutils/tfenv.git $HOME/.tfenv
 
-# git lxappearance
+### 1Password
+sudo -s \
+curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" |
+tee /etc/apt/sources.list.d/1password.list
+mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
+tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+apt update && apt install 1password-cli
+
+
+### Docker
+sh -c "$(curl -fsSL https://get.docker.com )"

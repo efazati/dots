@@ -40,14 +40,14 @@ if type "xrandr"; then
     line=$(xrandr --query | grep "${m}")
     if echo $line | grep -q "primary"; then
       echo "Primary found in line: $line"
-      MONITOR=$m NETWORK_1=$net1 NETWORK_2=$net2 polybar --reload top-primary --quiet &
+      MONITOR=$m NETWORK_1=$net1 NETWORK_2=$net2 polybar --config=~/.config/polybar/config.ini --reload top-primary --quiet &
     else
-      MONITOR=$m NETWORK_1=$net1 NETWORK_2=$net2 polybar --reload top --quiet &
+      MONITOR=$m NETWORK_1=$net1 NETWORK_2=$net2 polybar --config=~/.config/polybar/config.ini --reload top --quiet &
     fi
 
-    MONITOR=$m NETWORK_1=$net1 NETWORK_2=$net2 polybar --reload bot --quiet &
+    MONITOR=$m NETWORK_1=$net1 NETWORK_2=$net2 polybar --config=~/.config/polybar/config.ini --reload bot --quiet &
   done
 else
-  polybar --reload top bot --quiet &
-  polybar --reload top top --quiet &
+  polybar --config=~/.config/polybar/config.ini --reload top bot --quiet &
+  polybar --config=~/.config/polybar/config.ini --reload top top --quiet &
 fi
