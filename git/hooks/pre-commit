@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Purposes: 
+# Add an empty line at the end of the file.
+# Remove trailing spaces at the end of a line.
+
+# Files (not deleted) in the index
+files=$(git diff-index --name-status --cached HEAD | grep -v ^D | cut -c3-)
+if [ "$files" != "" ]
+then
+  for f in $files
+  do
+
+    # Only examine known text files
+    if grep -q -E "\.(py|php|conf|css|erb|html|js|json|log|properties|rb|ru|txt|xml|yml|h|m)$" <<< $f
+    then
+      # Remove trailing whitespace if it exists
+      if grep -q "[[:blank:]]$" $f
+      then
+        sed -i "" -e $'s/[ \t]*$//g' $f
+        git add $f
+      fi
+
+      # Add a linebreak to the file if it doesn't have one
+      if [[ -s "$f" && ! -z "$(tail -c 1 "$f")" ]]
+      then
+        echo >> $f
+        git add $f
+      fi
+    fi
+  done
+fi

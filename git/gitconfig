@@ -1,0 +1,50 @@
+[user]
+    name = <Mohammad Efazati>
+	email = mohammad@efazati.org
+[alias]
+	co = checkout
+	st = status
+	ci = commit
+	br = branch
+	sm = submodule
+	smu = submodule update
+	smi = submodule init
+	smf = submodule foreach
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	lgpo = log --pretty=oneline
+    commit-random = !git commit -m \"$(curl -s http://whatthecommit.com/index.txt)\"
+    rand = !git add -A; git commit-random; git push
+[apply]
+	whitespace = nowarn
+[core]
+    editor = vim
+	excludesfile = /Users/efazati/.gitignore
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	ui = auto
+	grep = auto
+[help]
+	autocorrect = 1
+[push]
+    default = current
+[diff]
+    tool = meld
+    guitool = meld
+[mergetool "meld"]
+    path = meld
+[difftool "meld"]
+    path = meld
+
+[pull]
+	rebase = true
+[init]
+	defaultBranch = master
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
