@@ -1,5 +1,5 @@
 #export TERM=linux
-export PATH=$HOME/bin:$HOME/.tfenv/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.tfenv/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="jonathan"
 plugins=(
@@ -44,7 +44,6 @@ alias pm='sudo pacman'
 alias p='paru'
 alias clip="xclip -sel clip"
 
-
 alias k8="kubectl"
 alias k8s="kubectl"
 alias kp="title Pods; kubectl get pods -A --field-selector=metadata.namespace!=kube-system"
@@ -88,7 +87,11 @@ alias gdev='git checkout dev'
 alias gmain='git checkout main'
 alias gmaster='git checkout master'
 alias gempty='git commit --allow-empty -m "Empty-Commit"'
-alias fmt='terraform fmt -recursive . && git add -A && git commit -m "FMT" && git push'
+alias gsh='git stash'
+alias gshp='git stash pop'
+
+alias fmt='terraform fmt -recursive .'
+alias fmtc='terraform fmt -recursive . && git add -A && git commit -m "FMT" && git push'
 
 function tmux_start() {
   tmux new-session -d -s work
@@ -127,6 +130,9 @@ smash () {
     fi
 }
 
+catclip() {
+    bat --style=plain "$1" | xclip -sel clip
+}
 
 # Check if .zshrc.personal exists and source it
 if [[ -f ~/.zshrc.personal ]]; then

@@ -47,6 +47,7 @@ sudo apt install -y \
     evince \
     blueman \
     bluez \
+    awscli \
     pavucontrol 
 
 sudo chsh efazati -s /bin/zsh
