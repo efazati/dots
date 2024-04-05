@@ -100,6 +100,8 @@ sudo chmod 777 /etc/wireguard
 
 # sudo ln -s /opt/Synergy/synergy /usr/local/bin
 
+mkdir -p ~/.vim/pack/plugins/start && git clone https://github.com/mg979/vim-visual-multi ~/.vim/pack/plugins/start/vim-visual-multi 
+
 git clone --depth=1 https://github.com/tfutils/tfenv.git $HOME/.tfenv
 
 ### 1Password

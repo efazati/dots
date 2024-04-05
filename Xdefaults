@@ -16,11 +16,17 @@ URxvt.keysym.M-Left:    \033[1;5D
 URxvt.keysym.M-Right:    \033[1;5C
 
 URxvt.tabbedalt.new-button: false
-URxvt.tabbedalt.tab-numbers: false
-URxvt.keysym.Control-t: tabbedalt:new_tab
-! URxvt.tabbedalt.disable-default-keys: true
-! URxvt.keysym.M-Right: tabbedalt:move_tab_left
-! URxvt.keysym.M-Left: tabbedalt:move_tab_left
+URxvt.tabbedalt.tab-numbers: true
+URxvt.tabbedalt.disable-default-keys: true
+
+URxvt.keysym.Control-Shift-T: tabbedalt:new_tab
+URxvt.keysym.Control-Shift-Right: tabbedalt:next_tab
+URxvt.keysym.Control-Shift-Left: tabbedalt:prev_tab
+URxvt.keysym.Control-Shift-Up: tabbedalt:rename_tab
+
+! URxvt.keysym.Control-M-:     font-size:increase
+! URxvt.keysym.Control-M-Down:   font-size:deControl-Mrease
+! URxvt.keysym.Control-M-equal:  font-size:reset
 
 URxvt.url-select.underline: true
 urxvt.urlLauncher: /usr/bin/firefox
@@ -42,8 +48,3 @@ URxvt.iso14755_52: false
 URxvt.geometry: 400x400
 
 urxvt.saveLines: 1000000
-
-
-URxvt.keysym.C-Up:     font-size:increase
-URxvt.keysym.C-Down:   font-size:decrease
-URxvt.keysym.C-equal:  font-size:reset

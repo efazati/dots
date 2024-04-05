@@ -1,0 +1,139 @@
+[
+    {
+        "category": "",
+        "type": "debug",
+        "name": "debug",
+        "rank": 3
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "fa",
+        "txt": "setxkbmap -option grp:switch,grp:alt_shift_toggle,grp_led:scroll,caps:none us,ir",
+        "rank": 92
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "snip",
+        "txt": "carbon-now --from-clipboard -c",
+        "rank": 3
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "wg_up",
+        "txt": "urxvt -e sh -c 'sudo wg-quick up wg0;'",
+        "rank": 49
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "wg_down",
+        "txt": "urxvt -e sh -c 'sudo wg-quick down wg0;'",
+        "rank": 28
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "htop",
+        "txt": "urxvt -e sh -c 'htop'",
+        "rank": 8
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "vim",
+        "txt": "urxvt -e sh -c 'vim'",
+        "rank": 4
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "fish_config",
+        "txt": "code ~/.config/fish/config.fish",
+        "rank": 21
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "zsh_config",
+        "txt": "code ~/.zshrc",
+        "rank": 23
+    },
+    {
+        "category": "Personal",
+        "type": "command",
+        "name": "i3_config",
+        "txt": "urxvt -e sh -c 'vim ~/.config/i3/config; fish'",
+        "rank": 27
+    },
+    {
+        "category": "Personal",
+        "type": "url",
+        "name": "weather",
+        "host": "https://www.yr.no/place/Ireland/Leinster/Dublin/hour_by_hour.html",
+        "rank": 5
+    },
+    {
+        "category": "Personal",
+        "type": "url",
+        "name": "google",
+        "host": "https://google.com/",
+        "rank": 1
+    },
+    {
+        "category": "Personal",
+        "type": "url",
+        "name": "gmail",
+        "host": "https://mail.google.com/mail/u/0/#inbox",
+        "rank": 1
+    },
+    {
+        "category": "Personal",
+        "type": "clipboard",
+        "name": "email",
+        "txt": "mohammad@efazati.org"
+    },
+    {
+        "category": "Personal",
+        "type": "clipboard",
+        "name": "post",
+        "txt": "sample_post_code"
+    },
+    {
+        "category": "Personal",
+        "type": "path",
+        "name": "dl",
+        "path": "~/Downloads"
+    },
+    {
+        "category": "Personal",
+        "type": "path",
+        "name": "config",
+        "path": "~/.config",
+        "rank": 1
+    },
+    {
+        "category": "Personal",
+        "type": "path",
+        "name": "projects",
+        "path": "~/projects",
+        "rank": 2
+    },
+    {
+        "category": "Personal",
+        "type": "path",
+        "name": "home",
+        "path": "~",
+        "rank": 1
+    },
+    {
+        "category": "Personal",
+        "type": "ssh",
+        "name": "sample_ssh",
+        "user": "handy",
+        "host": "127.0.0.1",
+        "rank": 7
+    }
+]

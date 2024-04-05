@@ -12,7 +12,7 @@ DOCKER_COMMAND = "docker run -it %s -v '$HOME/.private:/work/.private' -v '$HOME
 
 class Handy:
     
-    HANDY_PATH = os.path.expanduser('~/.private/handy.json')
+    HANDY_PATH = os.path.expanduser('~/handy.json')
     SSH_LIST_PATH = os.path.expanduser('~/.private/ssh.txt')
 
     def __init__(self, path=None):
@@ -24,7 +24,10 @@ class Handy:
 
     def load_data_stack(self, handy_path, ssh_path):
         json_file = open(handy_path)
-        ssh_file = open(ssh_path)
+        try:
+            ssh_file = open(ssh_path)
+        except:
+            ssh_file = []
         data = json.load(json_file)
         raw_data = json_file.read()
         old_host = []
@@ -54,7 +57,7 @@ class Handy:
         rank = self.data_stack[self.data_stack.index(requested_item)].get("rank", 0)
         self.data_stack[self.data_stack.index(requested_item)]['rank'] = rank + 1
         with open(self.handy_path, 'w') as outfile:
-            json.dump(self.data_stack, outfile)
+            json.dump(self.data_stack, outfile, indent=4)
 
     def open_ssh(self, requested_item):
         ssh_host = requested_item['user']+"@"+requested_item['host']

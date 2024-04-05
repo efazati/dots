@@ -89,6 +89,8 @@ alias gmaster='git checkout master'
 alias gempty='git commit --allow-empty -m "Empty-Commit"'
 alias gsh='git stash'
 alias gshp='git stash pop'
+alias greset="git reset --hard HEAD" # undo changes and preserve untracked files
+alias gclean="git clean -f -d -x" # clean ALL changes and remove untracked files
 
 alias fmt='terraform fmt -recursive .'
 alias fmtc='terraform fmt -recursive . && git add -A && git commit -m "FMT" && git push'
