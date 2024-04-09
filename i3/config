@@ -230,47 +230,6 @@ bindsym $mod+Shift+Q restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+$mark+l exit
 
-# # resize window (you can also use the mouse for that)
-# mode "resize" {
-#         # These bindings trigger as soon as you enter the resize mode
-
-#         # They resize the border in the direction you pressed, e.g.
-#         # when pressing left, the window is resized so that it has
-#         # more space on its left
-
-#         bindsym j resize shrink left 10 px or 10 ppt
-#         bindsym Shift+J resize grow   left 10 px or 10 ppt
-
-#         bindsym k resize shrink down 10 px or 10 ppt
-#         bindsym Shift+K resize grow   down 10 px or 10 ppt
-
-#         bindsym l resize shrink up 10 px or 10 ppt
-#         bindsym Shift+L resize grow   up 10 px or 10 ppt
-
-#         bindsym semicolon resize shrink right 10 px or 10 ppt
-#         bindsym Shift+colon resize grow   right 10 px or 10 ppt
-
-#         # same bindings, but for the arrow keys
-#         bindsym Left resize shrink left 10 px or 10 ppt
-#         bindsym Shift+Left resize grow   left 10 px or 10 ppt
-
-#         bindsym Down resize shrink down 10 px or 10 ppt
-#         bindsym Shift+Down resize grow   down 10 px or 10 ppt
-
-#         bindsym Up resize shrink up 10 px or 10 ppt
-#         bindsym Shift+Up resize grow   up 10 px or 10 ppt
-
-#         bindsym Right resize shrink right 10 px or 10 ppt
-#         bindsym Shift+Right resize grow   right 10 px or 10 ppt
-
-#         # back to normal: Enter or Escape
-#         bindsym Return mode "default"
-#         bindsym Escape mode "default"
-# }
-
-# bindsym $mod+r mode "resize"
-
-
 # $i3-theme-window
 # tango dark
 set $darkblue 		#204A87
@@ -307,28 +266,6 @@ set $darkblack 		#2E3436
 set $darkgrey 		#888A85
 set $darkwhite #D3D7CF
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-#bar {
-#        tray_output eDP-1
-#        strip_workspace_numbers yes
-#        status_command i3status
-#        position top
-#        separator_symbol ":|:"
-#		colors {
-#		    # <workclass> <border> <backg> <text>
-#		    focused_workspace 	$lightblue $blue $white
-#		    active_workspace 	$darkgrey $black $grey
-#		    inactive_workspace	$black $darkblack $grey
-#		    urgent_workspace 	$lightred $red $white
-#		    background #222222
-#			separator  #444444
-#			statusline $darkgrey
-#		}
-#}
-
-
-
 for_window [class="jetbrains-goland"] layout tabbed
 for_window [class="Goland"] layout tabbed
 for_window [class="Sublime"] layout tabbed
@@ -337,7 +274,7 @@ for_window [class="subl"] layout tabbed
 for_window [title="alsamixer"] floating enable border pixel 1
 for_window [class="Skype"] floating enable border normal
 
-for_window [class="Urxvt"] border  pixel 1
+for_window [class="Urxvt"] border pixel 1
 for_window [instance="Download" class="Firefox"] floating enable
 # for_window [class="Xfce4-notifyd"] border none
 for_window [class="Xfce4-notifyd"] floating enable
@@ -386,9 +323,9 @@ for_window [class="Pavucontrol"] floating enable, resize set 900px 610px
 bindsym $mod+$mark+p exec --no-startup-id pavucontrol
 
 # Chat-GPT Desktop App
-bindsym $mod+c [con_mark="chatgpt"] scratchpad show
+bindsym $mod+c [con_mark="chatgpt"] scratchpad show fullscreen enable
 for_window [class="Chat-gpt"] mark "chatgpt", move scratchpad
-for_window [class="Chat-gpt"] floating enable, resize set 900px 610px
+# for_window [class="Chat-gpt"] floating enable, resize set 900px 610px
 bindsym $mod+Shift+c exec --no-startup-id chat-gpt
 
 ## Move anything to scratchpad
