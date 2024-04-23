@@ -10,7 +10,7 @@
         "type": "command",
         "name": "fa",
         "txt": "setxkbmap -option grp:switch,grp:alt_shift_toggle,grp_led:scroll,caps:none us,ir",
-        "rank": 92
+        "rank": 95
     },
     {
         "category": "Personal",

@@ -59,6 +59,12 @@ alias kpod="kubectl describe pod"
 alias kdep="kubectl describe deployment"
 alias ksvc="kubectl describe service"
 alias ksec='() { kubectl get secret/$1 -o go-template='"'"'{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'"'"' ; }'
+
+alias kpv="kubectl get pv"
+alias kpvc="kubectl get pvc --all-namespaces"
+alias kpvcd="kubectl describe pvc"
+alias kexec='function _kexec(){ kubectl exec -it $1 -n $2 -- bash; }; _kexec'
+
 alias kctx="kubectl config get-contexts"
 alias kprod="kubectl config use-context prod"
 alias kstg="kubectl config use-context stg"
