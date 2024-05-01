@@ -9,7 +9,7 @@ plugins=(
 #   zsh-autosuggestions
 #   zsh-syntax-highlighting
   fast-syntax-highlighting
-  zsh-autocomplete
+  # zsh-autocomplete
   docker
   docker-compose
   kubectl
@@ -153,3 +153,5 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 . /usr/share/autojump/autojump.zsh
+
+eval "$(atuin init zsh)"
