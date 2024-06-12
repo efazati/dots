@@ -110,7 +110,8 @@ exec --no-startup-id "dunst"
 exec --no-startup-id "nm-applet &"
 exec --no-startup-id "blueman-applet &"
 exec --no-startup-id "xfce4-clipman &"
-
+exec --no-startup-id "flameshot &"
+flameshot
 # start a terminal
 bindsym $mod+Return exec urxvt
 
@@ -132,7 +133,8 @@ bindsym $mod+F3 [class="code-oss"] focus
 bindsym $mod+Shift+F3 exec --no-startup-id code
 bindsym $mod+F4 exec --no-startup-id todoist
 bindsym $mod+F2 exec --no-startup-id obsidian
-bindsym $mod+b exec --no-startup-id  xfce4-screenshooter -c -r
+# bindsym $mod+b exec --no-startup-id  xfce4-screenshooter -c -r
+bindsym $mod+b exec --no-startup-id  flameshot gui
 bindsym $mod+s exec --no-startup-id slack
 
 bindsym $mod+$mark+F7 exec --no-startup-id bash ~/bin/screen/external.sh
@@ -349,6 +351,5 @@ exec --no-startup-id "todoist"
 exec --no-startup-id "obsidian"
 exec --no-startup-id "synergy"
 exec --no-startup-id "sunsama"
-exec --no-startup-id "xfce4-clipman"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock
