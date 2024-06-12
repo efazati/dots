@@ -19,6 +19,8 @@ hi Search ctermfg=white
 nnoremap <esc> :noh<return><esc>
 
 nnoremap <esc>^[ <esc>^[
+nnoremap q: <nop>
+nnoremap Q <nop>
 
 set ruler
 
