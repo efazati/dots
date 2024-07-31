@@ -46,7 +46,7 @@ alias clip="xclip -sel clip"
 
 alias k8="kubectl"
 alias k8s="kubectl"
-alias kp="title Pods; kubectl get pods -A --field-selector=metadata.namespace!=kube-system"
+alias kp="title Pods; kubectl get pods -A | grep -v 'kube-system\|longhorn-system'"
 alias kd="title Deployments; kubectl get deployment -A --field-selector=metadata.namespace!=kube-system"
 alias ks="title Services; kubectl get svc -A --field-selector=metadata.namespace!=kube-system"
 alias kn="title Nodes; kubectl get nodes -o wide"
