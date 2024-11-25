@@ -58,8 +58,14 @@ alias kimage="title Image; kp -o jsonpath=\"{.items[*].spec.containers[*].image}
 alias kpod="kubectl describe pod"
 alias kdep="kubectl describe deployment"
 alias ksvc="kubectl describe service"
-alias ksec='() { kubectl get secret/$1 -o go-template='"'"'{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'"'"' ; }'
-
+#alias ksec='() { kubectl get secret/$1 -o go-template='"'"'{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'"'"' ; }'
+alias ksec='() {
+  if [ -z "$2" ]; then
+    kubectl get secret/$1 -o go-template="{{range \$k,\$v := .data}}{{printf \"%s: \" \$k}}{{if not \$v}}{{\$v}}{{else}}{{\$v | base64decode}}{{end}}{{\"\n\"}}{{end}}"
+  else
+    kubectl get secret/$1 -n $2 -o go-template="{{range \$k,\$v := .data}}{{printf \"%s: \" \$k}}{{if not \$v}}{{\$v}}{{else}}{{\$v | base64decode}}{{end}}{{\"\n\"}}{{end}}"
+  fi
+}'
 alias kpv="kubectl get pv"
 alias kpvc="kubectl get pvc --all-namespaces"
 alias kpvcd="kubectl describe pvc"
