@@ -1,0 +1,111 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "shift+ctrl+y",
+        "command": "editor.action.revealDefinition",
+        "when": "editorHasDefinitionProvider && editorTextFocus"
+    },
+    {
+        "key": "f12",
+        "command": "-editor.action.revealDefinition",
+        "when": "editorHasDefinitionProvider && editorTextFocus"
+    },
+    {
+        "key": "shift+ctrl+l",
+        "command": "editor.action.insertCursorAtEndOfEachLineSelected",
+        "when": "editorTextFocus"
+      },
+      {
+        "key": "ctrl+d",
+        "command": "editor.action.addSelectionToNextFindMatch",
+        "when": "editorFocus"
+      },
+      {
+        "key": "ctrl+shift+pageup",
+        "command": "cursorColumnSelectPageUp",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+ctrl+up",
+        "command": "editor.action.moveLinesUpAction",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "alt+up",
+        "command": "-editor.action.moveLinesUpAction",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "shift+ctrl+down",
+        "command": "editor.action.moveLinesDownAction",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "alt+down",
+        "command": "-editor.action.moveLinesDownAction",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+shift+a",
+        "command": "workbench.action.showCommands"
+    },
+    {
+        "key": "shift+ctrl+d",
+        "command": "editor.action.goToReferences",
+        "when": "editorHasReferenceProvider && !inReferenceSearchEditor && !isInEmbeddedEditor"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "workbench.action.terminal.openNativeConsole",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "shift+ctrl+c",
+        "command": "-workbench.action.terminal.openNativeConsole",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "terminal.focus"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "terminal.active"
+    },
+    {
+        "key": "ctrl+`",
+        "command": "-workbench.action.terminal.toggleTerminal",
+        "when": "terminal.active"
+    },
+    {
+        "key": "alt+ctrl+l",
+        "command": "workbench.action.chat.newChat",
+        "when": "chatIsEnabled && inChat"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-workbench.action.chat.newChat",
+        "when": "chatIsEnabled && inChat"
+    },
+    {
+        "key": "alt+ctrl+l",
+        "command": "aichat.newchataction"
+    },
+    {
+        "key": "ctrl+l",
+        "command": "-aichat.newchataction"
+    },
+    {
+        "key": "ctrl+l", // Replace with your desired key combination
+        "command": "workbench.action.terminal.clear",
+        "when": "terminalFocus" // Ensures it works only when the terminal is focused
+    },
+    {
+        "key": "ctrl+w", // Use "ctrl+w" on Windows/Linux
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0017" }, // \u0017 is the control sequence for deleting the last word
+        "when": "terminalFocus"
+    }
+    
+]

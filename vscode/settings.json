@@ -1,0 +1,349 @@
+
+{
+    "security.workspace.trust.untrustedFiles": "newWindow",
+    "editor.fontSize": 15,
+    "editor.lineHeight": 25,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "redhat.telemetry.enabled": true,
+    "workbench.tree.indent": 24,
+    "workbench.tree.renderIndentGuides": "always",
+    "workbench.colorCustomizations": {
+        "tree.indentGuidesStroke": "#ffffff",
+        "editor.background": "#000000",
+        "editor.foreground": "#FFFFFF",
+        "sideBarTitle.foreground": "#FFFFFF",
+        "editor.lineHighlightBackground": "#2E2E2E",
+        "focusBorder": "#00000000",
+        "editor.lineHighlightBorder": "#00000000",
+        "activityBar.border": "#00000000",
+        "tab.activeBorder": "#00000000",
+        "sideBar.background": "#000000",
+        "activityBar.background": "#000000"
+    },
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "settings": {
+                    "foreground": "#FFFFFF",
+                    "background": "#000000"
+                }
+            },
+            {
+                "scope": "comment",
+                "settings": {
+                    "foreground": "#B3B3B3"
+                }
+            },
+            {
+                "name": "Types declaration and reference",
+                "scope": [
+                    "meta.return-type",
+                    "entity.name.type",
+                    "entity.name.class",
+                    "storage.type.cs",
+                    "storage.type.generic.cs",
+                    "storage.type.modifier.cs",
+                    "storage.type.variable.cs",
+                    "storage.type.annotation.java",
+                    "storage.type.generic.java",
+                    "storage.type.java",
+                    "storage.type.object.array.java",
+                    "storage.type.primitive.array.java",
+                    "storage.type.primitive.java",
+                    "storage.type.token.java",
+                    "storage.type.groovy",
+                    "storage.type.annotation.groovy",
+                    "storage.type.parameters.groovy",
+                    "storage.type.generic.groovy",
+                    "storage.type.object.array.groovy",
+                    "storage.type.primitive.array.groovy",
+                    "storage.type.primitive.groovy"
+                ],
+                "settings": {
+                    "foreground": "#00ff08"
+                }
+            },
+            {
+                "name": "Types declaration and references, TS grammar specific",
+                "scope": [
+                    "meta.return.type",
+                    "meta.type.cast.expr",
+                    "meta.type.new.expr",
+                    "support.constant.math",
+                    "support.constant.dom",
+                    "support.constant.json",
+                    "entity.other.inherited-class"
+                ],
+                "settings": {
+                    "fontStyle": "italic",
+                    "foreground": "#A6E22E"
+                }
+            },
+            {
+                "name": "Function identifier",
+                "scope": [
+                    "entity.name.function",
+                    "support.function",
+                    "support.constant.handlebars"
+                ],
+                "settings": {
+                    "foreground": "#A6E22E"
+                }
+            },
+            {
+                "name": "Function call",
+                "scope": [
+                    "meta.function-call"
+                ],
+                "settings": {
+                    "fontStyle": ""
+                }
+            },
+            {
+                "name": "Arguments",
+                "scope": [
+                    "punctuation.section.arguments"
+                ],
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#A6E22E"
+                }
+            },
+            {
+                "name": "Parameters",
+                "scope": [
+                    "punctuation.section.parameters"
+                ],
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#A6E22E"
+                }
+            },
+            {
+                "name": "Variable and parameter name",
+                "scope": [
+                    "variable",
+                    "meta.definition.variable.name",
+                    "support.variable"
+                ],
+                "settings": {
+                    "foreground": "#9CDCFE"
+                }
+            },
+            {
+                "name": "Core punctuation",
+                "scope": [
+                    "punctuation.separator",
+                    "punctuation.terminator",
+                    "punctuation.other"
+                ],
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#F3C6BE"
+                }
+            },
+            {
+                "name": "Control flow keywords",
+                "scope": [
+                    "keyword.control",
+                    "keyword.operator.expression",
+                    "keyword.operator.cast",
+                    "keyword.operator.sizeof",
+                    "keyword.package",
+                    "keyword.import"
+                ],
+                "settings": {
+                    "fontStyle": "italic",
+                    "foreground": "#F92672"
+                }
+            },
+            {
+                "name": "Operators",
+                "scope": [
+                    "keyword.operator",
+                    "keyword.operator.new",
+                    "keyword.operator.logical.python"
+                ],
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#F92672"
+                }
+            },
+            {
+                "scope": "storage",
+                "settings": {
+                    "foreground": "#AE81FF"
+                }
+            },
+            {
+                "name": "Storage Type",
+                "scope": [
+                    "support.class",
+                    "support.type",
+                    "storage.type"
+                ],
+                "settings": {
+                    "fontStyle": "italic",
+                    "foreground": "#66D9EF"
+                }
+            },
+            {
+                "scope": "storage.modifier",
+                "settings": {
+                    "foreground": "#F92672"
+                }
+            },
+            {
+                "scope": [
+                    "string",
+                    "string.tag",
+                    "string.value"
+                ],
+                "settings": {
+                    "foreground": "#F9EC6D"
+                }
+            },
+            {
+                "scope": "string.regexp",
+                "settings": {
+                    "foreground": "#D16969"
+                }
+            },
+            {
+                "name": "Constants",
+                "scope": [
+                    "constant.character",
+                    "constant.other",
+                    "constant.numeric",
+                    "constant.language"
+                ],
+                "settings": {
+                    "foreground": "#AE81FF"
+                }
+            },
+            {
+                "name": "TS this",
+                "scope": "variable.language.this",
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#FC9B1B"
+                }
+            },
+            {
+                "name": "json Property",
+                "scope": "support.type.property-name.json",
+                "settings": {
+                    "fontStyle": ""
+                }
+            },
+            {
+                "name": "CSS property value",
+                "scope": [
+                    "support.constant.property-value",
+                    "support.constant.font-name",
+                    "support.constant.media-type",
+                    "support.constant.media",
+                    "constant.other.color.rgb-value",
+                    "constant.other.rgb-value",
+                    "support.constant.color"
+                ],
+                "settings": {
+                    "foreground": "#CE9178"
+                }
+            },
+            {
+                "name": "Tag name",
+                "scope": "entity.name.tag",
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#F92672"
+                }
+            },
+            {
+                "name": "Tag attribute",
+                "scope": "entity.other.attribute-name",
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#A6E22E"
+                }
+            },
+            {
+                "name": "Tag bracket",
+                "scope": [
+                    "meta.tag.inline",
+                    "punctuation.definition.tag"
+                ],
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#5CDBEF"
+                }
+            },
+            {
+                "name": "Make prerequisites",
+                "scope": "meta.scope.prerequisites.makefile",
+                "settings": {
+                    "fontStyle": "italic",
+                    "foreground": "#F9EC6D"
+                }
+            },
+            {
+                "name": "Make key value",
+                "scope": "punctuation.separator.key-value.makefile",
+                "settings": {
+                    "foreground": "#F92572"
+                }
+            },
+            {
+                "scope": [
+                    "variable.other.readwrite",
+                ],
+                "settings": {
+                    "foreground": "#ffffff" // Replace with your desired color (e.g., orange)
+                }
+            },
+            {
+                "scope": [
+                    "support.variable",
+                ],
+                "settings": {
+                    "foreground": "#ffffff" // Replace with your desired color (e.g., orange)
+                }
+            },
+            {
+                "name": "Go construct types",
+                "scope": [
+                    "keyword.struct.go",
+                    "keyword.map.go",
+                    "keyword.interface.go"
+                ],
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#66D9EF"
+                }
+            },
+            {
+                "name": "Golang Declaration Keywords",
+                "scope": [
+                    "keyword.type.go",
+                    "keyword.function.go",
+                    "keyword.var.go"
+                ],
+                "settings": {
+                    "fontStyle": "",
+                    "foreground": "#F92672"
+                }
+            }
+        ]
+    },
+    "editor.minimap.enabled": false,
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "files.autoSave": "onFocusChange",
+    "gitHistory.sourceCodeProviderIntegrationLocation": "More Actions",
+    "window.zoomLevel": 1.5,
+    "terminal.integrated.fontSize": 16,
+    "terminal.integrated.lineHeight": 1.4,
+}
