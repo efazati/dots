@@ -1,4 +1,3 @@
-
 {
     "security.workspace.trust.untrustedFiles": "newWindow",
     "editor.fontSize": 15,
@@ -10,7 +9,7 @@
     "workbench.tree.indent": 24,
     "workbench.tree.renderIndentGuides": "always",
     "workbench.colorCustomizations": {
-        "tree.indentGuidesStroke": "#ffffff",
+        "tree.indentGuidesStroke": "#aeaeae",
         "editor.background": "#000000",
         "editor.foreground": "#FFFFFF",
         "sideBarTitle.foreground": "#FFFFFF",
@@ -20,7 +19,7 @@
         "activityBar.border": "#00000000",
         "tab.activeBorder": "#00000000",
         "sideBar.background": "#000000",
-        "activityBar.background": "#000000"
+        "activityBar.background": "#000000",
     },
     "editor.tokenColorCustomizations": {
         "textMateRules": [
@@ -31,7 +30,7 @@
                 }
             },
             {
-                "scope": "comment",
+                "scope"/: "comment",
                 "settings": {
                     "foreground": "#B3B3B3"
                 }
