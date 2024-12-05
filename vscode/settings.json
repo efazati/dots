@@ -1,5 +1,7 @@
 {
     "security.workspace.trust.untrustedFiles": "newWindow",
+    "workbench.editor.enablePreview": false,
+    "files.insertFinalNewline": true,
     "editor.fontSize": 15,
     "editor.lineHeight": 25,
     "[python]": {
