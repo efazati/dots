@@ -124,6 +124,6 @@ sh -c "$(curl -fsSL https://get.docker.com )"
 
 ### Cursor / VSCode
 rm -rf ~/.config/Cursor/User/keybindings.json
-ln -s $(realpath keybindings.json) ~/.config/Cursor/User/keybindings.json
+ln -s $(realpath vscode/keybindings.json) ~/.config/Cursor/User/keybindings.json
 rm -rf ~/.config/Cursor/User/settings.json
-ln -s $(realpath settings.json) ~/.config/Cursor/User/settings.json
+ln -s $(realpath vscode/settings.json) ~/.config/Cursor/User/settings.json
