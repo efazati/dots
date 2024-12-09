@@ -40,6 +40,7 @@ assign [class="pycharm"]      $w3
 assign [class="jetbrains-goland"]      $w3
 assign [class="Goland"]      $w3
 assign [class="code-oss"]      $w3
+assign [class="Cursor"]      $w3
 
 assign [class="^[Zz]oom$"] $w5
 
@@ -128,7 +129,8 @@ bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy::~/.
 bindsym $mod+F1 exec --no-startup-id firefox
 bindsym $mod+Shift+F1 exec --no-startup-id google-chrome-stable
 bindsym $mod+F5 exec --no-startup-id telegram-desktop
-bindsym $mod+F3 [class="code-oss"] focus
+bindsym $mod+F3 [class="Cursor"] focus
+# bindsym $mod+F3 [class="code-oss"] focus
 bindsym $mod+Shift+F3 exec --no-startup-id code
 bindsym $mod+F4 exec --no-startup-id todoist
 bindsym $mod+F2 exec --no-startup-id obsidian
@@ -345,9 +347,9 @@ exec --no-startup-id "firefox"
 exec --no-startup-id "slack"
 exec --no-startup-id "telegram-desktop"
 exec --no-startup-id "spotify"
-#exec --no-startup-id "code"
+exec --no-startup-id "cursor"
 exec --no-startup-id "todoist"
-exec --no-startup-id "obsidian"
+# exec --no-startup-id "obsidian"
 exec --no-startup-id "synergy"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock

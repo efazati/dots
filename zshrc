@@ -148,6 +148,17 @@ catclip() {
     bat --style=plain "$1" | xclip -sel clip
 }
 
+tclip() {
+    local cmd="$@"
+    local output
+    output=$(eval "$cmd")
+    echo "$output"
+    {
+        echo "$ $cmd"
+        echo "$output"
+    } | xclip -sel clip
+}
+
 # Check if .zshrc.personal exists and source it
 if [[ -f ~/.zshrc.personal ]]; then
     source ~/.zshrc.personal

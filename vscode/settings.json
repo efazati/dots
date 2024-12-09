@@ -28,11 +28,10 @@
             {
                 "settings": {
                     "foreground": "#FFFFFF",
-                    "background": "#000000"
                 }
             },
             {
-                "scope"/: "comment",
+                "scope": "comment",
                 "settings": {
                     "foreground": "#B3B3B3"
                 }
@@ -309,7 +308,7 @@
                     "support.variable",
                 ],
                 "settings": {
-                    "foreground": "#ffffff" // Replace with your desired color (e.g., orange)
+                    "foreground": "#ffc800" // Replace with your desired color (e.g., orange)
                 }
             },
             {
@@ -335,6 +334,13 @@
                     "fontStyle": "",
                     "foreground": "#F92672"
                 }
+            },
+            {
+                "name": "terraform",
+                "scope": "keyword.operator.assignment.terraform",
+                "settings": {
+                    "foreground": "#FFA500"  // Hex code for orange color
+                }
             }
         ]
     },
@@ -347,4 +353,5 @@
     "window.zoomLevel": 1.5,
     "terminal.integrated.fontSize": 16,
     "terminal.integrated.lineHeight": 1.4,
+    "terraform.languageServer.enable": true,
 }
