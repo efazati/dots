@@ -40,7 +40,7 @@ alias h='history -i'
 alias hs='history | grep'
 alias psa='ps aux | grep'
 
-alias pm='sudo pacman' 
+alias pm='sudo pacman'
 alias p='paru'
 alias clip="xclip -sel clip"
 
@@ -74,7 +74,7 @@ alias kexec='function _kexec(){ kubectl exec -it $1 -n $2 -- bash; }; _kexec'
 alias kctx="kubectl config get-contexts"
 alias kprod="kubectl config use-context prod"
 alias kstg="kubectl config use-context stg"
-
+alias kdebug="kubectl run debug-pod --image=ubuntu:latest --restart=Never --command -- sleep infinity && sleep 5 && kubectl exec -it debug-pod -- bash"
 
 #alias d='docker'
 alias dps='title "Docker PS"; docker ps -a'
