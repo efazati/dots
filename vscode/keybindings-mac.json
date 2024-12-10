@@ -1,3 +1,4 @@
+// Place your key bindings in this file to override the defaults
 [
     {
         "key": "shift+cmd+y",
@@ -45,7 +46,7 @@
         "when": "editorTextFocus && !editorReadonly"
     },
     {
-        "key": "ctrl+shift+a",
+        "key": "cmd+shift+a",
         "command": "workbench.action.showCommands"
     },
     {
@@ -107,29 +108,41 @@
         "when": "terminalFocus"
     },
     {
-        "key": "ctrl+shift+m",
-        "command": "editor.action.selectToBracket"
-    },
-    {
-        "key": "ctrl+shift+m",
-        "command": "editor.action.smartSelect.expand",
+        "key": "cmd+home",
+        "command": "cursorTop",
         "when": "editorTextFocus"
     },
     {
-        "key": "shift+alt+right",
-        "command": "-editor.action.smartSelect.expand",
+        "key": "cmd+end",
+        "command": "cursorBottom",
         "when": "editorTextFocus"
     },
     {
-        "key": "ctrl+shift+n",
+        "key": "shift+cmd+w",
+        "command": "workbench.action.closeEditorsInGroup"
+    },
+    {
+        "key": "cmd+r w",
+        "command": "-workbench.action.closeEditorsInGroup"
+    },
+    {
+        "key": "shift+cmd+n",
         "command": "editor.action.smartSelect.shrink",
         "when": "editorTextFocus"
     },
     {
-        "key": "shift+alt+left",
+        "key": "ctrl+shift+left",
         "command": "-editor.action.smartSelect.shrink",
         "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+cmd+m",
+        "command": "editor.action.smartSelect.expand",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+right",
+        "command": "-editor.action.smartSelect.expand",
+        "when": "editorTextFocus"
     }
-    
-    
 ]
