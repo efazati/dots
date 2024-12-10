@@ -1,13 +1,21 @@
 {
+    "breadcrumbs.enabled": true,
+	"editor.accessibilitySupport": "off",
+	"editor.autoIndent": "full",
+	"editor.fontLigatures": true,
+	"editor.guides.indentation": true,
+	"editor.multiCursorModifier": "ctrlCmd",
+	"editor.rulers": [
+		80,
+		120
+	],
     "security.workspace.trust.untrustedFiles": "newWindow",
     "workbench.editor.enablePreview": false,
-    "files.insertFinalNewline": true,
     "editor.fontSize": 15,
     "editor.lineHeight": 25,
     "[python]": {
         "editor.formatOnType": true
     },
-    "redhat.telemetry.enabled": true,
     "workbench.tree.indent": 24,
     "workbench.tree.renderIndentGuides": "always",
     "workbench.colorCustomizations": {
@@ -348,10 +356,25 @@
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "files.autoSave": "onFocusChange",
     "gitHistory.sourceCodeProviderIntegrationLocation": "More Actions",
     "window.zoomLevel": 1.5,
     "terminal.integrated.fontSize": 16,
     "terminal.integrated.lineHeight": 1.4,
     "terraform.languageServer.enable": true,
+    "files.autoSave": "onFocusChange",
+    "files.insertFinalNewline": true,
+	"files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+	"files.exclude": {
+		"**/__pycache__": true,
+		"**/.coverage": true,
+		"**/.DS_Store": true,
+		"**/.git": true,
+		"**/.hg": true,
+		"**/.idea": true,
+		"**/.svn": true,
+		"**/.vagrant": true,
+		"**/*.egg-info": true,
+		"**/*.pyc": true
+	},
 }
