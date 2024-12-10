@@ -146,5 +146,9 @@
         "key": "ctrl+alt+t",
         "command": "workbench.action.toggleMaximizedPanel"
     },
-    
+    {
+        "key": "shift+cmd+f",
+        "command": "editor.action.formatDocument",
+        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+    },
 ]

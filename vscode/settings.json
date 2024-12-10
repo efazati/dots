@@ -1,14 +1,13 @@
 {
     "breadcrumbs.enabled": true,
-	"editor.accessibilitySupport": "off",
-	"editor.autoIndent": "full",
-	"editor.fontLigatures": true,
-	"editor.guides.indentation": true,
-	"editor.multiCursorModifier": "ctrlCmd",
-	"editor.rulers": [
-		80,
-		120
-	],
+    "editor.accessibilitySupport": "off",
+    "editor.autoIndent": "full",
+    "editor.fontLigatures": true,
+    "editor.guides.indentation": true,
+    "editor.rulers": [
+        80,
+        120
+    ],
     "security.workspace.trust.untrustedFiles": "newWindow",
     "workbench.editor.enablePreview": false,
     "editor.fontSize": 15,
@@ -347,14 +346,25 @@
                 "name": "terraform",
                 "scope": "keyword.operator.assignment.terraform",
                 "settings": {
-                    "foreground": "#FFA500"  // Hex code for orange color
+                    "foreground": "#FFA500" // Hex code for orange color
                 }
             }
         ]
     },
     "editor.minimap.enabled": false,
     "[json]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[terraform]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "hashicorp.terraform",
+        "editor.tabSize": 2,
+    },
+    "[terraform-vars]": {
+        "editor.tabSize": 2
     },
     "gitHistory.sourceCodeProviderIntegrationLocation": "More Actions",
     "window.zoomLevel": 1.5,
@@ -363,18 +373,18 @@
     "terraform.languageServer.enable": true,
     "files.autoSave": "onFocusChange",
     "files.insertFinalNewline": true,
-	"files.eol": "\n",
+    "files.eol": "\n",
     "files.trimTrailingWhitespace": true,
-	"files.exclude": {
-		"**/__pycache__": true,
-		"**/.coverage": true,
-		"**/.DS_Store": true,
-		"**/.git": true,
-		"**/.hg": true,
-		"**/.idea": true,
-		"**/.svn": true,
-		"**/.vagrant": true,
-		"**/*.egg-info": true,
-		"**/*.pyc": true
-	},
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.coverage": true,
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.idea": true,
+        "**/.svn": true,
+        "**/.vagrant": true,
+        "**/*.egg-info": true,
+        "**/*.pyc": true
+    },
 }

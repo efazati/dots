@@ -1,4 +1,3 @@
-// Place your key bindings in this file to override the defaults
 [
     {
         "key": "shift+cmd+y",
@@ -144,5 +143,15 @@
         "key": "ctrl+shift+right",
         "command": "-editor.action.smartSelect.expand",
         "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+cmd+f",
+        "command": "editor.action.formatDocument",
+        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+    },
+    {
+        "key": "shift+alt+f",
+        "command": "-editor.action.formatDocument",
+        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
     }
 ]
