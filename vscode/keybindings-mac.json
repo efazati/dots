@@ -145,7 +145,7 @@
         "when": "editorTextFocus"
     },
     {
-        "key": "shift+cmd+f",
+        "key": "shift+cmd+i",
         "command": "editor.action.formatDocument",
         "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
     },
