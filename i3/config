@@ -142,12 +142,12 @@ bindsym $mod+$mark+F7 exec --no-startup-id bash ~/bin/screen/external.sh
 bindsym $mod+F7 exec --no-startup-id bash ~/bin/screen/default.sh
 # bindsym $mod+F8 exec --no-startup-id bash ~/bin/screen/home.sh
 
-bindsym $mod+Shift+G exec "gromit-mpx --active"
-bindsym $mod+g exec "gromit-mpx --toggle"
-bindsym $mod+r exec "gromit-mpx --clear"
-bindsym $mod+f exec "gromit-mpx --visibility"
-bindsym $mod+Ctrl+9 exec "gromit-mpx --undo"
-bindsym $mod+Ctrl+0 exec "gromit-mpx --redo"
+bindsym $mod+Shift+G exec --no-startup-id "gromit-mpx --active"
+bindsym $mod+g exec --no-startup-id "gromit-mpx --toggle"
+bindsym $mod+r exec --no-startup-id "gromit-mpx --clear"
+bindsym $mod+f exec --no-startup-id "gromit-mpx --visibility"
+bindsym $mod+Ctrl+9 exec --no-startup-id "gromit-mpx --undo"
+bindsym $mod+Ctrl+0 exec --no-startup-id "gromit-mpx --redo"
 
 # bindsym $mod+$mark+F9 exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
 # bindsym $mod+F9 exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
