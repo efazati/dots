@@ -48,7 +48,7 @@ sudo apt install -y \
     blueman \
     bluez \
     awscli \
-    pavucontrol 
+    pavucontrol
 
 sudo chsh efazati -s /bin/zsh
 
@@ -93,14 +93,14 @@ git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git $OH
 
 chmod 755 $HOME/.oh-my-zsh/plugins/*
 
-sudo chmod 777 /etc/wireguard 
+sudo chmod 777 /etc/wireguard
 
 # INSERT_YOUR_USERNAME ALL = (root) NOPASSWD: /usr/bin/wg-quick
 # /etc/sudoers.d/wiregaurd
 
 # sudo ln -s /opt/Synergy/synergy /usr/local/bin
 
-mkdir -p ~/.vim/pack/plugins/start && git clone https://github.com/mg979/vim-visual-multi ~/.vim/pack/plugins/start/vim-visual-multi 
+mkdir -p ~/.vim/pack/plugins/start && git clone https://github.com/mg979/vim-visual-multi ~/.vim/pack/plugins/start/vim-visual-multi
 
 git clone --depth=1 https://github.com/tfutils/tfenv.git $HOME/.tfenv
 
@@ -127,3 +127,4 @@ rm -rf ~/.config/Cursor/User/keybindings.json
 ln -s $(realpath vscode/keybindings.json) ~/.config/Cursor/User/keybindings.json
 rm -rf ~/.config/Cursor/User/settings.json
 ln -s $(realpath vscode/settings.json) ~/.config/Cursor/User/settings.json
+ln -s $(realpath ./gromit-mpx.cfg) ~/.config/gromit-mpx.cfg

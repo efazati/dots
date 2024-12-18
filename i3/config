@@ -121,7 +121,7 @@ bindsym $mod+q kill
 # start dmenu (a program launcher)
 bindsym $mod+space exec --no-startup-id rofi -show drun -show-icons
 bindsym $alt+Tab exec --no-startup-id rofi -show window -show-iconsalt
-#bindsym $mod+$mark+space exec --no-startup-id rofi  -show trans_ -modi trans_:alt~/.config/rofi/translate.py 
+#bindsym $mod+$mark+space exec --no-startup-id rofi  -show trans_ -modi trans_:alt~/.config/rofi/translate.py
 bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy::~/.config/rofi/handy.py
 #bindsym $mod+$mark+space exec --no-startup-id rofi_verbose
 #bindsym $mod+space exec --no-startup-id dmenu_run
@@ -141,6 +141,13 @@ bindsym $mod+s exec --no-startup-id slack
 bindsym $mod+$mark+F7 exec --no-startup-id bash ~/bin/screen/external.sh
 bindsym $mod+F7 exec --no-startup-id bash ~/bin/screen/default.sh
 # bindsym $mod+F8 exec --no-startup-id bash ~/bin/screen/home.sh
+
+bindsym $mod+Shift+G exec "gromit-mpx --active"
+bindsym $mod+g exec "gromit-mpx --toggle"
+bindsym $mod+r exec "gromit-mpx --clear"
+bindsym $mod+f exec "gromit-mpx --visibility"
+bindsym $mod+Ctrl+9 exec "gromit-mpx --undo"
+bindsym $mod+Ctrl+0 exec "gromit-mpx --redo"
 
 # bindsym $mod+$mark+F9 exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
 # bindsym $mod+F9 exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
@@ -351,5 +358,6 @@ exec --no-startup-id "cursor"
 exec --no-startup-id "todoist"
 # exec --no-startup-id "obsidian"
 exec --no-startup-id "synergy"
+exec --no-startup-id "gromit-mpx"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock
