@@ -59,6 +59,14 @@
         "when": "!terminalFocus"
     },
     {
+        "key": "cmd+shift+t",
+        "command": "workbench.action.terminal.newWithCwd",
+        "args": {
+            "cwd": "${fileDirname}"
+        },
+        "when": "!terminalFocus"
+    },
+    {
         "key": "shift+cmd+c",
         "command": "-workbench.action.terminal.openNativeConsole",
         "when": "!terminalFocus"
