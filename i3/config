@@ -358,6 +358,6 @@ exec --no-startup-id "cursor"
 exec --no-startup-id "todoist"
 # exec --no-startup-id "obsidian"
 exec --no-startup-id "synergy"
-exec --no-startup-id "gromit-mpx"
+# exec --no-startup-id "gromit-mpx"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock
