@@ -76,6 +76,86 @@ alias kprod="kubectl config use-context prod"
 alias kstg="kubectl config use-context stg"
 alias kdebug="kubectl run debug-pod --image=ubuntu:latest --restart=Never --command -- sleep infinity && sleep 5 && kubectl exec -it debug-pod -- bash"
 
+alias kclean='kubectl get pods --all-namespaces \
+  | grep -E "ContainerStatusUnknown|Error" \
+  | awk "{print \$1, \$2}" \
+  | xargs -n2 sh -c "kubectl delete pod \$1 -n \$0"'
+
+
+_kpg() {
+  local reason=${1:-ContainerCreating}
+  local minage=${2:-480}
+  local now=$(date -u +%s)
+
+  # Colors
+  local RED="\033[0;31m"
+  local GREEN="\033[0;32m"
+  local YELLOW="\033[1;33m"
+  local BLUE="\033[0;34m"
+  local CYAN="\033[0;36m"
+  local NC="\033[0m"
+
+  kubectl get pods --all-namespaces \
+    -o custom-columns="NS:.metadata.namespace,NAME:.metadata.name,PHASE:.status.phase,REASON:.status.containerStatuses[*].state.waiting.reason,CREATED:.metadata.creationTimestamp" \
+  | grep -i "$reason" \
+  | awk -v now="$now" -v minage="$minage" -v reason="$reason" \
+        -v RED="$RED" -v GREEN="$GREEN" -v YELLOW="$YELLOW" -v BLUE="$BLUE" -v CYAN="$CYAN" -v NC="$NC" '
+      NR>1 {
+        # macOS/BSD date: -j (don’t set), -f (format)
+        cmd = "date -u -j -f %Y-%m-%dT%H:%M:%SZ \"" $5 "\" +%s"
+        cmd | getline t
+        close(cmd)
+        age = now - t
+        if (age > minage) {
+          phase_color = ($3 == "Running") ? GREEN : (($3 == "Pending") ? YELLOW : RED)
+          printf "%s%s/%s%s  %sPHASE=%s%s  %sREASON=%s%s  %sAGE=%ds%s\n", \
+            CYAN, $1, $2, NC, \
+            phase_color, $3, NC, \
+            BLUE, reason, NC, \
+            YELLOW, age, NC
+        }
+      }'
+}
+
+# Optional short alias
+alias kpg=_kpg
+
+
+kdig() {
+  local action=$1
+  local ns_pod=$2
+
+  if [[ -z "$action" || -z "$ns_pod" ]]; then
+    echo "Usage: kdig {shell|log|pod} namespace/pod"
+    return 1
+  fi
+
+  # Split "ns/pod"
+  local ns="${ns_pod%%/*}"
+  local pod="${ns_pod##*/}"
+
+  case "$action" in
+    shell)
+      echo "➡️  Exec into pod: $ns/$pod"
+      kubectl exec -it -n "$ns" "$pod" -- /bin/sh || \
+      kubectl exec -it -n "$ns" "$pod" -- /bin/bash
+      ;;
+    log|logs)
+      echo "➡️  Logs for pod: $ns/$pod"
+      kubectl logs -n "$ns" "$pod" --tail=200 -f
+      ;;
+    pod|describe)
+      echo "➡️  Describe pod: $ns/$pod"
+      kubectl describe pod -n "$ns" "$pod"
+      ;;
+    *)
+      echo "Unknown action: $action"
+      echo "Usage: kdig {shell|log|pod} namespace/pod"
+      return 1
+      ;;
+  esac
+}
+
 #alias d='docker'
 alias dps='title "Docker PS"; docker ps -a'
 alias dim='title "Docker Images"; docker images'
