@@ -179,4 +179,8 @@
         "command": "-editor.action.insertCursorAbove",
         "when": "editorTextFocus"
     },
+    {
+        "key": "ctrl+i",
+        "command": "composerMode.agent"
+    },
 ]

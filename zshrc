@@ -2,6 +2,10 @@
 export PATH=$HOME/bin:$HOME/.tfenv/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="jonathan"
+
+# Show timestamps in history (format: yyyy-mm-dd HH:MM:SS)
+HIST_STAMPS="yyyy-mm-dd %H:%M:%S"
+
 plugins=(
   sudo
   git
@@ -17,6 +21,83 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
+
+# Build prompt with proper spacing (optimized - single pass)
+function build_prompt() {
+  local exit_code=$?
+  local term_width=${COLUMNS:-$(tput cols)}
+
+  # Get actual values (only once per prompt)
+  local time_str=$(date +%H:%M:%S)
+  local path_str="${(%):-%~}"
+  local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+
+  local ctx ns
+  if command -v kubectx &> /dev/null; then
+    ctx=$(kubectx -c 2>/dev/null)
+  else
+    ctx=$(kubectl config current-context 2>/dev/null)
+  fi
+  if [[ -n "$ctx" ]]; then
+    if command -v kubens &> /dev/null; then
+      ns=$(kubens -c 2>/dev/null)
+    else
+      ns=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
+    fi
+    [[ -z "$ns" ]] && ns="default"
+  fi
+
+  # Exit code display (show only if non-zero)
+  local exit_str=""
+  if [[ $exit_code -ne 0 ]]; then
+    exit_str=" %{$fg[red]%}✗ ${exit_code}%{$reset_color%}"
+  fi
+
+  # Calculate lengths
+  local time_len=$((${#time_str} + 2))  # [HH:MM:SS]
+  local path_len=${#path_str}
+  local git_len=0
+  [[ -n "$branch" ]] && git_len=$((${#branch} + 3))
+
+  local exit_len=0
+  [[ $exit_code -ne 0 ]] && exit_len=$((${#exit_code} + 4))  # " ✗ 1"
+
+  local kube_len=0
+  [[ -n "$ctx" ]] && kube_len=$((${#ctx} + ${#ns} + 4))
+
+  # Calculate separator length
+  local left_len=$((time_len + 1 + path_len + git_len))
+  local right_len=$((exit_len + kube_len))
+  local separator_len=$((term_width - left_len - right_len - 2))
+  [[ $separator_len -lt 3 ]] && separator_len=3
+
+  # Build separator with yellow straight line
+  local sep=$(printf '━%.0s' {1..$separator_len})
+
+  # Build the prompt
+  local prompt_line="%{$fg[cyan]%}[%*]%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%}"
+  [[ -n "$branch" ]] && prompt_line="${prompt_line} %{$fg[magenta]%} ${branch}%{$reset_color%}"
+  prompt_line="${prompt_line} %{$fg[yellow]%}${sep}%{$reset_color%}"
+  [[ $exit_code -ne 0 ]] && prompt_line="${prompt_line}${exit_str}"
+  [[ -n "$ctx" ]] && prompt_line="${prompt_line} %{$fg[cyan]%}☸ %{$fg[red]%}${ctx}%{$reset_color%}:%{$fg[green]%}${ns}%{$reset_color%}"
+
+  echo "${prompt_line}"
+}
+
+# Custom prompt: everything on one line, input on next line
+setopt PROMPT_SUBST
+PROMPT='
+$(build_prompt)
+
+%{$fg[yellow]%}➜%{$reset_color%} '
+
+# Add blank line after command is entered (before output)
+preexec() {
+  echo
+}
+
+# Clear right prompt
+RPROMPT=''
 
 export EDITOR=vim
 
@@ -70,6 +151,8 @@ alias kpv="kubectl get pv"
 alias kpvc="kubectl get pvc --all-namespaces"
 alias kpvcd="kubectl describe pvc"
 alias kexec='function _kexec(){ kubectl exec -it $1 -n $2 -- bash; }; _kexec'
+alias kctx='kubectx'
+alias kns='kubens'
 
 alias kctx="kubectl config get-contexts"
 alias kprod="kubectl config use-context prod"

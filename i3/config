@@ -122,7 +122,7 @@ bindsym $mod+q kill
 bindsym $mod+space exec --no-startup-id rofi -show drun -show-icons
 bindsym $alt+Tab exec --no-startup-id rofi -show window -show-iconsalt
 #bindsym $mod+$mark+space exec --no-startup-id rofi  -show trans_ -modi trans_:alt~/.config/rofi/translate.py
-bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy::~/.config/rofi/handy.py
+bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy:~/.config/rofi/handy.py
 #bindsym $mod+$mark+space exec --no-startup-id rofi_verbose
 #bindsym $mod+space exec --no-startup-id dmenu_run
 
@@ -333,10 +333,10 @@ for_window [class="Pavucontrol"] floating enable, resize set 900px 610px
 bindsym $mod+$mark+p exec --no-startup-id pavucontrol
 
 # Chat-GPT Desktop App
-bindsym $mod+c [con_mark="chatgpt"] scratchpad show fullscreen enable
-for_window [class="Chat-gpt"] mark "chatgpt", move scratchpad
-# for_window [class="Chat-gpt"] floating enable, resize set 900px 610px
-bindsym $mod+Shift+c exec --no-startup-id chat-gpt
+# bindsym $mod+c [con_mark="Samwise"] scratchpad show fullscreen enable
+# for_window [class="Samwise"] mark "Samwise", move scratchpad
+for_window [class="Samwise"] floating enable, resize set 900px 610px
+exec --no-startup-id "samwise"
 
 ## Move anything to scratchpad
 #bindsym $mod+$mark+o mark "alpha", move scratchpad
