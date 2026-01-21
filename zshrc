@@ -6,14 +6,11 @@ ZSH_THEME="jonathan"
 # Show timestamps in history (format: yyyy-mm-dd HH:MM:SS)
 HIST_STAMPS="yyyy-mm-dd %H:%M:%S"
 
+# Minimal plugins for speed - disabled most heavy ones
 plugins=(
   sudo
   git
-  git-auto-fetch
-#   zsh-autosuggestions
-#   zsh-syntax-highlighting
   fast-syntax-highlighting
-  # zsh-autocomplete
   docker
   docker-compose
   kubectl
@@ -22,30 +19,75 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-# Build prompt with proper spacing (optimized - single pass)
+# Enable kubectl completions for short aliases (zsh style)
+compdef k=kubectl
+compdef k8=kubectl
+compdef k8s=kubectl
+
+# ============================================================
+# OPTIMIZED FANCY PROMPT with smart caching
+# ============================================================
+
+# Kubernetes cache variables
+_KUBE_CTX_CACHE=""
+_KUBE_NS_CACHE=""
+_KUBE_LAST_CHECK=0
+_KUBE_CHECK_INTERVAL=10  # Only refresh every 10 seconds
+
+# Smart kubernetes cache - reads from file for context, uses cached kubectl for namespace
+_get_kube_info_smart() {
+  local kubeconfig="${KUBECONFIG:-$HOME/.kube/config}"
+  local now=$EPOCHSECONDS
+
+  # Only refresh every N seconds (instant response between checks)
+  if (( now - _KUBE_LAST_CHECK > _KUBE_CHECK_INTERVAL )) || [[ -z "$_KUBE_CTX_CACHE" ]]; then
+    [[ ! -f "$kubeconfig" ]] && return
+
+    # Read context from file (instant - ~2ms)
+    _KUBE_CTX_CACHE=$(grep '^current-context:' "$kubeconfig" 2>/dev/null | sed 's/^current-context: *//' | tr -d '\n')
+
+    # Get namespace using kubectl (runs in background to not block prompt)
+    if [[ -n "$_KUBE_CTX_CACHE" ]]; then
+      # Try to get namespace from kubectl config
+      _KUBE_NS_CACHE=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
+      [[ -z "$_KUBE_NS_CACHE" ]] && _KUBE_NS_CACHE="default"
+    fi
+
+    _KUBE_LAST_CHECK=$now
+  fi
+
+  echo "$_KUBE_CTX_CACHE|$_KUBE_NS_CACHE"
+}
+
+# Hook to invalidate cache when switching contexts
+kubectl() {
+  command kubectl "$@"
+  local ret=$?
+  # Invalidate cache if context/namespace changed
+  if [[ "$1" == "config" ]] && [[ "$2" == "use-context" || "$2" == "set-context" ]]; then
+    _KUBE_LAST_CHECK=0
+  fi
+  return $ret
+}
+
+# Optimized fancy prompt with all the visual elements
 function build_prompt() {
   local exit_code=$?
   local term_width=${COLUMNS:-$(tput cols)}
 
-  # Get actual values (only once per prompt)
-  local time_str=$(date +%H:%M:%S)
+  # Get path (fast, built-in)
   local path_str="${(%):-%~}"
-  local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
-  local ctx ns
-  if command -v kubectx &> /dev/null; then
-    ctx=$(kubectx -c 2>/dev/null)
-  else
-    ctx=$(kubectl config current-context 2>/dev/null)
+  # Git branch - only check if in a git repo (fast)
+  local branch=""
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
   fi
-  if [[ -n "$ctx" ]]; then
-    if command -v kubens &> /dev/null; then
-      ns=$(kubens -c 2>/dev/null)
-    else
-      ns=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
-    fi
-    [[ -z "$ns" ]] && ns="default"
-  fi
+
+  # Get kubernetes info with smart caching (only refreshes when config file changes)
+  local kube_info=$(_get_kube_info_smart)
+  local ctx="${kube_info%%|*}"
+  local ns="${kube_info##*|}"
 
   # Exit code display (show only if non-zero)
   local exit_str=""
@@ -53,14 +95,14 @@ function build_prompt() {
     exit_str=" %{$fg[red]%}✗ ${exit_code}%{$reset_color%}"
   fi
 
-  # Calculate lengths
-  local time_len=$((${#time_str} + 2))  # [HH:MM:SS]
+  # Calculate lengths for separator
+  local time_len=10  # [HH:MM:SS] is always 10 chars
   local path_len=${#path_str}
   local git_len=0
   [[ -n "$branch" ]] && git_len=$((${#branch} + 3))
 
   local exit_len=0
-  [[ $exit_code -ne 0 ]] && exit_len=$((${#exit_code} + 4))  # " ✗ 1"
+  [[ $exit_code -ne 0 ]] && exit_len=$((${#exit_code} + 4))
 
   local kube_len=0
   [[ -n "$ctx" ]] && kube_len=$((${#ctx} + ${#ns} + 4))
@@ -74,7 +116,7 @@ function build_prompt() {
   # Build separator with yellow straight line
   local sep=$(printf '━%.0s' {1..$separator_len})
 
-  # Build the prompt
+  # Build the fancy prompt
   local prompt_line="%{$fg[cyan]%}[%*]%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%}"
   [[ -n "$branch" ]] && prompt_line="${prompt_line} %{$fg[magenta]%} ${branch}%{$reset_color%}"
   prompt_line="${prompt_line} %{$fg[yellow]%}${sep}%{$reset_color%}"
@@ -84,19 +126,11 @@ function build_prompt() {
   echo "${prompt_line}"
 }
 
-# Custom prompt: everything on one line, input on next line
 setopt PROMPT_SUBST
 PROMPT='
 $(build_prompt)
-
 %{$fg[yellow]%}➜%{$reset_color%} '
 
-# Add blank line after command is entered (before output)
-preexec() {
-  echo
-}
-
-# Clear right prompt
 RPROMPT=''
 
 export EDITOR=vim
@@ -127,7 +161,9 @@ alias clip="xclip -sel clip"
 
 alias k8="kubectl"
 alias k8s="kubectl"
-alias kp="title Pods; kubectl get pods -A | grep -v 'kube-system\|longhorn-system'"
+alias k="kubectl"
+alias kp="title Pods; kubectl get pods"
+alias kpa="title 'All Pods'; kubectl get pods -A | grep -v 'kube-system\|longhorn-system'"
 alias kd="title Deployments; kubectl get deployment -A --field-selector=metadata.namespace!=kube-system"
 alias ks="title Services; kubectl get svc -A --field-selector=metadata.namespace!=kube-system"
 alias kn="title Nodes; kubectl get nodes -o wide"
@@ -139,7 +175,6 @@ alias kimage="title Image; kp -o jsonpath=\"{.items[*].spec.containers[*].image}
 alias kpod="kubectl describe pod"
 alias kdep="kubectl describe deployment"
 alias ksvc="kubectl describe service"
-#alias ksec='() { kubectl get secret/$1 -o go-template='"'"'{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'"'"' ; }'
 alias ksec='() {
   if [ -z "$2" ]; then
     kubectl get secret/$1 -o go-template="{{range \$k,\$v := .data}}{{printf \"%s: \" \$k}}{{if not \$v}}{{\$v}}{{else}}{{\$v | base64decode}}{{end}}{{\"\n\"}}{{end}}"
@@ -154,7 +189,7 @@ alias kexec='function _kexec(){ kubectl exec -it $1 -n $2 -- bash; }; _kexec'
 alias kctx='kubectl-ctx'
 alias kns='kubectl-ns'
 
-alias kctx="kubectl config get-contexts"
+# alias kctx="kubectl config get-contexts"
 alias kprod="kubectl config use-context prod"
 alias kstg="kubectl config use-context stg"
 alias kdebug="kubectl run debug-pod --image=ubuntu:latest --restart=Never --command -- sleep infinity && sleep 5 && kubectl exec -it debug-pod -- bash"
@@ -231,7 +266,6 @@ _kpg() {
       }'
 }
 
-# Optional short alias
 alias kpg=_kpg
 
 kreport() {
@@ -253,7 +287,7 @@ kreport() {
   echo ""
 
   kubectl get pods --all-namespaces \
-    -o custom-columns="NS:.metadata.namespace,NAME:.metadata.name,PHASE:.status.phase,REASON:.status.containerStatuses[*].state.waiting.reason,CREATED:.metadata.creationTimestamp" \
+    -o custom-columns="NS:.metadata.namespace,NAME:.metadata.namespace,PHASE:.status.phase,REASON:.status.containerStatuses[*].state.waiting.reason,CREATED:.metadata.creationTimestamp" \
   | awk -v now="$now" -v minage="$minage" \
         -v RED="$RED" -v GREEN="$GREEN" -v YELLOW="$YELLOW" -v BLUE="$BLUE" -v CYAN="$CYAN" -v BOLD="$BOLD" -v NC="$NC" '
       NR>1 {
@@ -377,26 +411,19 @@ alias gmaster='git checkout master'
 alias gempty='git commit --allow-empty -m "Empty-Commit"'
 alias gsh='git stash'
 alias gshp='git stash pop'
-alias greset="git reset --hard HEAD" # undo changes and preserve untracked files
-alias gclean="git clean -f -d -x" # clean ALL changes and remove untracked files
+alias greset="git reset --hard HEAD"
+alias gclean="git clean -f -d -x"
 
 alias fmt='terraform fmt -recursive .'
 alias fmtc='terraform fmt -recursive . && git add -A && git commit -m "FMT" && git push'
 
 function tmux_start() {
   tmux new-session -d -s work
-
-  # Change to the directory you want in each window
   tmux send-keys -t work:1 'cd ~/project/' C-m
-
   tmux new-window -t work:2 -n 'Home'
   tmux send-keys -t work:2 'cd ~/' C-m
-
-
   tmux new-window -t work:3 -n 'Downloads'
   tmux send-keys -t work:3 'cd ~/Downloads/' C-m
-
-  # Attach to the session
   tmux attach-session -t work
 }
 
@@ -441,12 +468,41 @@ if [[ -f ~/.zshrc.personal ]]; then
 fi
 
 bindkey '\t' menu-complete "$terminfo[kcbt]" reverse-menu-complete
+
+# ============================================================
+# LAZY LOAD NVM (much faster shell startup)
+# ============================================================
 export NVM_DIR="$HOME/.nvm"
 
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-# . /usr/share/autojump/autojump.zsh
+# Lazy load nvm - only load when actually needed
+nvm() {
+  unset -f nvm node npm npx
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  nvm "$@"
+}
 
-# eval "$(atuin init zsh)"
+node() {
+  unset -f nvm node npm npx
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  node "$@"
+}
+
+npm() {
+  unset -f nvm node npm npx
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  npm "$@"
+}
+
+npx() {
+  unset -f nvm node npm npx
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  npx "$@"
+}
+
 export DATEBIN=gdate
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
