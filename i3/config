@@ -284,6 +284,8 @@ for_window [class="subl"] layout tabbed
 for_window [title="alsamixer"] floating enable border pixel 1
 for_window [class="Skype"] floating enable border normal
 
+for_window [class="Samwise"] floating enable border normal
+
 for_window [class="Urxvt"] border pixel 1
 for_window [instance="Download" class="Firefox"] floating enable
 # for_window [class="Xfce4-notifyd"] border none

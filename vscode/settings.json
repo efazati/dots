@@ -10,6 +10,13 @@
     ],
     "security.workspace.trust.untrustedFiles": "newWindow",
     "workbench.editor.enablePreview": false,
+    "workbench.auxiliaryBar.visible": false,
+    "workbench.panel.defaultLocation": "bottom",
+    "chat.enabled": false,
+    "chat.commandCenter.enabled": false,
+    "chat.editing.enabled": false,
+    "chat.editing.alwaysSaveWithGeneratedChanges": false,
+    "inlineChat.enabled": false,
     "editor.fontSize": 15,
     "editor.lineHeight": 25,
     "[python]": {
@@ -387,16 +394,22 @@
         "**/*.egg-info": true,
         "**/*.pyc": true
     },
-    "git.openRepositoryInParentFolders": "never",
-    "typescript.tsserver.maxTsServerMemory": 20000,
-    "[dockercompose]": {
-        "editor.insertSpaces": true,
-        "editor.tabSize": 2,
-        "editor.autoIndent": "advanced",
-        "editor.defaultFormatter": "redhat.vscode-yaml"
+    "files.associations": {
+        "*.pkr.hcl": "terraform"
     },
-    "[github-actions-workflow]": {
-        "editor.defaultFormatter": "redhat.vscode-yaml"
-    },
-    "redhat.telemetry.enabled": true,
+    "cursor.cpp.enablePartialAccepts": true,
+    "diffEditor.maxComputationTime": 0,
+    "typescript.tsserver.maxTsServerMemory": 10000,
+    "application.shellEnvironmentResolutionTimeout": 100,
+    "dbcode.connections": [
+        {
+            "connectionId": "OEaVmSeU043xGcz4Gelmm",
+            "name": "duck",
+            "driver": "duckdb",
+            "connectionType": "socket",
+            "socket": "/home/efazati/projects/bigtrade/data/bigtrade.duckdb",
+            "readOnly": false
+        }
+    ],
+    "window.commandCenter": true
 }

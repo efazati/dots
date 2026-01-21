@@ -462,6 +462,105 @@ tclip() {
     } | xclip -sel clip
 }
 
+aws_ec2_list() {
+  aws ec2 describe-instances \
+    --query 'Reservations[*].Instances[*].{ID: InstanceId, Name: Tags[?Key==`Name`]|[0].Value, Hostname: Tags[?Key==`hostname`]|[0].Value, PrivateIP: PrivateIpAddress, Status: State.Name}' \
+    --output table
+}
+
+aws_ec2_ssm_connect() {
+  if [ -z "$1" ]; then
+    echo "Usage: aws_ec2_ssm_connect <instance-id>"
+    return 1
+  fi
+  aws ssm start-session --target "$1"
+}
+
+aws_ec2_details() {
+  if [ -z "$1" ]; then
+    echo "Usage: aws_ec2_details <instance-id>"
+    return 1
+  fi
+
+  aws ec2 describe-instances \
+    --instance-ids "$1" \
+    --query 'Reservations[].Instances[].{
+      ID: InstanceId,
+      Name: Tags[?Key==`Name`]|[0].Value,
+      Hostname: Tags[?Key==`hostname`]|[0].Value,
+      Type: InstanceType,
+      State: State.Name,
+      PrivateIP: PrivateIpAddress,
+      PublicIP: PublicIpAddress,
+      AZ: Placement.AvailabilityZone,
+      LaunchTime: LaunchTime,
+      KeyName: KeyName
+    }' \
+    --output json | jq -r '.[0] | to_entries[] | "\(.key): \(.value)"'
+}
+
+aws_s3_list() {
+  aws s3 ls
+}
+
+aws_fsx_list() {
+  aws fsx describe-file-systems --output table
+}
+
+aws_vpc_list() {
+  aws ec2 describe-vpcs \
+    --query 'Vpcs[*].{VPC_ID: VpcId, CIDR: CidrBlock}' \
+    --output table
+}
+
+screencast () {
+    # Ask user to select a rectangle; flameshot prints WxH+X+Y
+    local selection
+    selection=$(flameshot gui -g)
+    if [ -z "$selection" ]; then
+        echo "No selection made. Exiting."
+        return 1
+    fi
+
+    # Parse geometry WxH+X+Y using a single awk call
+    local width height x y
+    read -r width height x y <<<"$(awk -F'[x+]' '{print $1, $2, $3, $4}' <<<"$selection")"
+
+    # Countdown
+    echo "Recording will start in 3 seconds..."
+    sleep 1
+    echo "2..."
+    sleep 1
+    echo "1..."
+    sleep 1
+
+    # Generate filename
+    local filename
+    filename="$(date +"%Y%m%d%H%M").mkv"
+
+    # Use current X display, fall back to :0.0 just in case
+    local display="${DISPLAY:-:0.0}"
+
+    # Start recording with selected area
+    # ffmpeg -f x11grab \
+    #     -video_size "${width}x${height}" \
+    #     -framerate 25 \
+    #     -i "${display}+${x},${y}" \
+    #     -f alsa -i default \
+    #     -c:v libx264 -preset ultrafast \
+    #     -c:a aac \
+    #     "$filename"
+
+    ffmpeg -f x11grab \
+        -video_size "${width}x${height}" \
+        -framerate 25 \
+        -i "${display}+${x},${y}" \
+        -c:v libx264 -preset ultrafast \
+        -an \
+        "$filename"
+}
+
+
 # Check if .zshrc.personal exists and source it
 if [[ -f ~/.zshrc.personal ]]; then
     source ~/.zshrc.personal
@@ -506,3 +605,5 @@ npx() {
 export DATEBIN=gdate
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
+# eval "$(atuin init zsh)"
+# export PATH=/usr/local/go/bin:$PATH
