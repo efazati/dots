@@ -151,8 +151,8 @@ alias kpv="kubectl get pv"
 alias kpvc="kubectl get pvc --all-namespaces"
 alias kpvcd="kubectl describe pvc"
 alias kexec='function _kexec(){ kubectl exec -it $1 -n $2 -- bash; }; _kexec'
-alias kctx='kubectx'
-alias kns='kubens'
+alias kctx='kubectl-ctx'
+alias kns='kubectl-ns'
 
 alias kctx="kubectl config get-contexts"
 alias kprod="kubectl config use-context prod"
@@ -166,8 +166,8 @@ alias kclean='kubectl get pods --all-namespaces \
 
 
 _kpg() {
-  local reason=${1:-ContainerCreating}
-  local minage=${2:-480}
+  local pattern=${1:-ContainerCreating}
+  local minage=${2:-0}
   local now=$(date -u +%s)
 
   # Colors
@@ -178,23 +178,54 @@ _kpg() {
   local CYAN="\033[0;36m"
   local NC="\033[0m"
 
+  echo "Searching for pods matching: $pattern (min age: ${minage}s)"
+
   kubectl get pods --all-namespaces \
     -o custom-columns="NS:.metadata.namespace,NAME:.metadata.name,PHASE:.status.phase,REASON:.status.containerStatuses[*].state.waiting.reason,CREATED:.metadata.creationTimestamp" \
-  | grep -i "$reason" \
-  | awk -v now="$now" -v minage="$minage" -v reason="$reason" \
+  | awk -v now="$now" -v minage="$minage" -v pattern="$pattern" \
         -v RED="$RED" -v GREEN="$GREEN" -v YELLOW="$YELLOW" -v BLUE="$BLUE" -v CYAN="$CYAN" -v NC="$NC" '
       NR>1 {
-        # macOS/BSD date: -j (don’t set), -f (format)
-        cmd = "date -u -j -f %Y-%m-%dT%H:%M:%SZ \"" $5 "\" +%s"
-        cmd | getline t
+        # Skip if timestamp field is empty or header row
+        if ($5 == "" || $5 == "CREATED") next
+
+        # Check if line matches pattern (namespace, pod name, or reason)
+        if (tolower($0) !~ tolower(pattern)) next
+
+        # Parse timestamp
+        cmd = "date -u -j -f \"%Y-%m-%dT%H:%M:%SZ\" \"" $5 "\" +%s 2>/dev/null"
+        result = (cmd | getline t)
         close(cmd)
+
+        if (result <= 0) {
+          # Try alternative format without Z
+          timestamp = $5
+          gsub(/Z$/, "", timestamp)
+          cmd = "date -u -j -f \"%Y-%m-%dT%H:%M:%S\" \"" timestamp "\" +%s 2>/dev/null"
+          result = (cmd | getline t)
+          close(cmd)
+
+          if (result <= 0) {
+            print "Warning: Could not parse timestamp: " $5 > "/dev/stderr"
+            next
+          }
+        }
+
         age = now - t
-        if (age > minage) {
-          phase_color = ($3 == "Running") ? GREEN : (($3 == "Pending") ? YELLOW : RED)
+        if (age >= minage) {
+          if ($3 == "Running") {
+            phase_color = GREEN
+          } else if ($3 == "Pending") {
+            phase_color = YELLOW
+          } else {
+            phase_color = RED
+          }
+
+          reason_display = ($4 == "<none>") ? "N/A" : $4
+
           printf "%s%s/%s%s  %sPHASE=%s%s  %sREASON=%s%s  %sAGE=%ds%s\n", \
             CYAN, $1, $2, NC, \
             phase_color, $3, NC, \
-            BLUE, reason, NC, \
+            BLUE, reason_display, NC, \
             YELLOW, age, NC
         }
       }'
@@ -203,6 +234,88 @@ _kpg() {
 # Optional short alias
 alias kpg=_kpg
 
+kreport() {
+  local minage=${1:-0}
+  local now=$(date -u +%s)
+
+  # Colors
+  local RED="\033[0;31m"
+  local GREEN="\033[0;32m"
+  local YELLOW="\033[1;33m"
+  local BLUE="\033[0;34m"
+  local CYAN="\033[0;36m"
+  local BOLD="\033[1m"
+  local NC="\033[0m"
+
+  echo "📊 Kubernetes Namespace Report (min age: ${minage}s)"
+  echo "=================================================================="
+  echo "Legend: ${GREEN}RUN${NC}=Running pods, ${YELLOW}CREATE${NC}=Creating/Pending pods, ${RED}FAIL${NC}=Failed/Error pods, ${BLUE}OTHER${NC}=Other statuses, ${CYAN}TOTAL${NC}=All pods"
+  echo ""
+
+  kubectl get pods --all-namespaces \
+    -o custom-columns="NS:.metadata.namespace,NAME:.metadata.name,PHASE:.status.phase,REASON:.status.containerStatuses[*].state.waiting.reason,CREATED:.metadata.creationTimestamp" \
+  | awk -v now="$now" -v minage="$minage" \
+        -v RED="$RED" -v GREEN="$GREEN" -v YELLOW="$YELLOW" -v BLUE="$BLUE" -v CYAN="$CYAN" -v BOLD="$BOLD" -v NC="$NC" '
+      NR>1 {
+        # Skip if timestamp or namespace field is empty
+        if ($5 == "" || $5 == "CREATED" || $1 == "") next
+
+        # Parse timestamp for age filtering
+        cmd = "date -u -j -f \"%Y-%m-%dT%H:%M:%SZ\" \"" $5 "\" +%s 2>/dev/null"
+        result = (cmd | getline t)
+        close(cmd)
+
+        if (result <= 0) {
+          timestamp = $5
+          gsub(/Z$/, "", timestamp)
+          cmd = "date -u -j -f \"%Y-%m-%dT%H:%M:%S\" \"" timestamp "\" +%s 2>/dev/null"
+          result = (cmd | getline t)
+          close(cmd)
+          if (result <= 0) next
+        }
+
+        age = now - t
+        if (age < minage) next
+
+        ns = $1
+        phase = $3
+        reason = $4
+
+        # Count by namespace and status
+        if (phase == "Running") {
+          running[ns]++
+        } else if (phase == "Pending" || reason == "ContainerCreating" || reason == "PodInitializing") {
+          creating[ns]++
+        } else if (phase == "Failed" || phase == "CrashLoopBackOff" || reason == "ImagePullBackOff" || reason == "ErrImagePull") {
+          failed[ns]++
+        } else {
+          other[ns]++
+        }
+        total[ns]++
+      }
+      END {
+        # Print header
+        printf "%s%-45s %sRUN %sCREATE %sFAIL %sOTHER %sTOTAL%s\n", \
+          BOLD, "NAMESPACE", GREEN, YELLOW, RED, BLUE, CYAN, NC
+        printf "=================================================================="
+
+        # Collect namespaces with running counts for sorting
+        for (ns in total) {
+          run_count = running[ns] + 0
+          printf "\n%03d|%-50s %s%3d%s   %s%3d%s   %s%3d%s   %s%3d%s   %s%3d%s", \
+            run_count, ns, \
+            GREEN, run_count, NC, \
+            YELLOW, creating[ns] + 0, NC, \
+            RED, failed[ns] + 0, NC, \
+            BLUE, other[ns] + 0, NC, \
+            CYAN, total[ns] + 0, NC
+        }
+        print ""
+      }' \
+  | tail -n +4 \
+  | sort -nr \
+  | sed 's/^[0-9]*|//'
+}
 
 kdig() {
   local action=$1
@@ -332,6 +445,8 @@ export NVM_DIR="$HOME/.nvm"
 
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-. /usr/share/autojump/autojump.zsh
+# . /usr/share/autojump/autojump.zsh
 
-eval "$(atuin init zsh)"
+# eval "$(atuin init zsh)"
+export DATEBIN=gdate
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True
