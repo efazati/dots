@@ -117,7 +117,7 @@ function build_prompt() {
   local sep=$(printf '━%.0s' {1..$separator_len})
 
   # Build the fancy prompt
-  local prompt_line="%{$fg[cyan]%}[%*]%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%}"
+  local prompt_line="%{$fg[cyan]%}[%*]%{$reset_color%} %{$fg[green]%}%~%{$reset_color%}"
   [[ -n "$branch" ]] && prompt_line="${prompt_line} %{$fg[magenta]%} ${branch}%{$reset_color%}"
   prompt_line="${prompt_line} %{$fg[yellow]%}${sep}%{$reset_color%}"
   [[ $exit_code -ne 0 ]] && prompt_line="${prompt_line}${exit_str}"
