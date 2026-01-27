@@ -3,6 +3,10 @@ export PATH=$HOME/bin:$HOME/.tfenv/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="jonathan"
 
+# Oh-My-Zsh optimizations - disable update checks for faster startup
+DISABLE_AUTO_UPDATE="true"
+DISABLE_UPDATE_PROMPT="true"
+
 # Show timestamps in history (format: yyyy-mm-dd HH:MM:SS)
 HIST_STAMPS="yyyy-mm-dd %H:%M:%S"
 
@@ -30,11 +34,10 @@ compdef k8s=kubectl
 
 # Kubernetes cache variables
 _KUBE_CTX_CACHE=""
-_KUBE_NS_CACHE=""
 _KUBE_LAST_CHECK=0
 _KUBE_CHECK_INTERVAL=10  # Only refresh every 10 seconds
 
-# Smart kubernetes cache - reads from file for context, uses cached kubectl for namespace
+# Smart kubernetes cache - reads from file for context (no kubectl namespace call)
 _get_kube_info_smart() {
   local kubeconfig="${KUBECONFIG:-$HOME/.kube/config}"
   local now=$EPOCHSECONDS
@@ -46,17 +49,10 @@ _get_kube_info_smart() {
     # Read context from file (instant - ~2ms)
     _KUBE_CTX_CACHE=$(grep '^current-context:' "$kubeconfig" 2>/dev/null | sed 's/^current-context: *//' | tr -d '\n')
 
-    # Get namespace using kubectl (runs in background to not block prompt)
-    if [[ -n "$_KUBE_CTX_CACHE" ]]; then
-      # Try to get namespace from kubectl config
-      _KUBE_NS_CACHE=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
-      [[ -z "$_KUBE_NS_CACHE" ]] && _KUBE_NS_CACHE="default"
-    fi
-
     _KUBE_LAST_CHECK=$now
   fi
 
-  echo "$_KUBE_CTX_CACHE|$_KUBE_NS_CACHE"
+  echo "$_KUBE_CTX_CACHE"
 }
 
 # Hook to invalidate cache when switching contexts
@@ -84,10 +80,8 @@ function build_prompt() {
     branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
   fi
 
-  # Get kubernetes info with smart caching (only refreshes when config file changes)
-  local kube_info=$(_get_kube_info_smart)
-  local ctx="${kube_info%%|*}"
-  local ns="${kube_info##*|}"
+  # Get kubernetes context (no namespace - that was the slow part)
+  local ctx=$(_get_kube_info_smart)
 
   # Exit code display (show only if non-zero)
   local exit_str=""
@@ -105,7 +99,7 @@ function build_prompt() {
   [[ $exit_code -ne 0 ]] && exit_len=$((${#exit_code} + 4))
 
   local kube_len=0
-  [[ -n "$ctx" ]] && kube_len=$((${#ctx} + ${#ns} + 4))
+  [[ -n "$ctx" ]] && kube_len=$((${#ctx} + 3))
 
   # Calculate separator length
   local left_len=$((time_len + 1 + path_len + git_len))
@@ -121,14 +115,13 @@ function build_prompt() {
   [[ -n "$branch" ]] && prompt_line="${prompt_line} %{$fg[magenta]%} ${branch}%{$reset_color%}"
   prompt_line="${prompt_line} %{$fg[yellow]%}${sep}%{$reset_color%}"
   [[ $exit_code -ne 0 ]] && prompt_line="${prompt_line}${exit_str}"
-  [[ -n "$ctx" ]] && prompt_line="${prompt_line} %{$fg[cyan]%}☸ %{$fg[red]%}${ctx}%{$reset_color%}:%{$fg[green]%}${ns}%{$reset_color%}"
+  [[ -n "$ctx" ]] && prompt_line="${prompt_line} %{$fg[cyan]%}☸ %{$fg[red]%}${ctx}%{$reset_color%}"
 
   echo "${prompt_line}"
 }
 
 setopt PROMPT_SUBST
-PROMPT='
-$(build_prompt)
+PROMPT='$(build_prompt)
 %{$fg[yellow]%}➜%{$reset_color%} '
 
 RPROMPT=''
@@ -566,7 +559,9 @@ if [[ -f ~/.zshrc.personal ]]; then
     source ~/.zshrc.personal
 fi
 
-bindkey '\t' menu-complete "$terminfo[kcbt]" reverse-menu-complete
+# Tab completion with menu - fix for empty terminfo[kcbt]
+bindkey '\t' menu-complete
+[[ -n "$terminfo[kcbt]" ]] && bindkey "$terminfo[kcbt]" reverse-menu-complete
 
 # ============================================================
 # LAZY LOAD NVM (much faster shell startup)
