@@ -10,6 +10,13 @@ DISABLE_UPDATE_PROMPT="true"
 # Show timestamps in history (format: yyyy-mm-dd HH:MM:SS)
 HIST_STAMPS="yyyy-mm-dd %H:%M:%S"
 
+# kube-ps1 configuration (must be before plugins are loaded)
+KUBE_PS1_SYMBOL_USE_IMG=true
+KUBE_PS1_NS_ENABLE=true  # Show namespace
+KUBE_PS1_PREFIX=""       # Remove opening parenthesis
+KUBE_PS1_SUFFIX=""       # Remove closing parenthesis
+KUBE_PS1_SEPARATOR=""    # Remove separator after symbol
+
 # Minimal plugins for speed - disabled most heavy ones
 plugins=(
   sudo
@@ -19,6 +26,7 @@ plugins=(
   docker-compose
   kubectl
   helm
+  kube-ps1
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -29,44 +37,11 @@ compdef k8=kubectl
 compdef k8s=kubectl
 
 # ============================================================
-# OPTIMIZED FANCY PROMPT with smart caching
+# FANCY PROMPT with kube-ps1 plugin
 # ============================================================
-
-# Kubernetes cache variables
-_KUBE_CTX_CACHE=""
-_KUBE_LAST_CHECK=0
-_KUBE_CHECK_INTERVAL=10  # Only refresh every 10 seconds
-
-# Smart kubernetes cache - reads from file for context (no kubectl namespace call)
-_get_kube_info_smart() {
-  local kubeconfig="${KUBECONFIG:-$HOME/.kube/config}"
-  local now=$EPOCHSECONDS
-
-  # Only refresh every N seconds (instant response between checks)
-  if (( now - _KUBE_LAST_CHECK > _KUBE_CHECK_INTERVAL )) || [[ -z "$_KUBE_CTX_CACHE" ]]; then
-    [[ ! -f "$kubeconfig" ]] && return
-
-    # Read context from file (instant - ~2ms)
-    _KUBE_CTX_CACHE=$(grep '^current-context:' "$kubeconfig" 2>/dev/null | sed 's/^current-context: *//' | tr -d '\n')
-
-    _KUBE_LAST_CHECK=$now
-  fi
-
-  echo "$_KUBE_CTX_CACHE"
-}
-
-# Hook to invalidate cache when switching contexts
-kubectl() {
-  command kubectl "$@"
-  local ret=$?
-  # Invalidate cache if context/namespace changed
-  if [[ "$1" == "config" ]] && [[ "$2" == "use-context" || "$2" == "set-context" ]]; then
-    _KUBE_LAST_CHECK=0
-  fi
-  return $ret
-}
-
-# Optimized fancy prompt with all the visual elements
+# Description: Builds a custom prompt showing time, path, git branch, kubernetes context, and exit codes
+# Features: Full-width separator line, color-coded elements, kubernetes integration
+# Auto-called by PROMPT variable - no manual usage needed
 function build_prompt() {
   local exit_code=$?
   local term_width=${COLUMNS:-$(tput cols)}
@@ -80,8 +55,9 @@ function build_prompt() {
     branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
   fi
 
-  # Get kubernetes context (no namespace - that was the slow part)
-  local ctx=$(_get_kube_info_smart)
+  # Update and get kubernetes context from kube-ps1 plugin
+  _kube_ps1_prompt_update 2>/dev/null
+  local kube_info=$(kube_ps1)
 
   # Exit code display (show only if non-zero)
   local exit_str=""
@@ -98,8 +74,12 @@ function build_prompt() {
   local exit_len=0
   [[ $exit_code -ne 0 ]] && exit_len=$((${#exit_code} + 4))
 
+  # Get visible length of kube_info (calculate directly from variables)
   local kube_len=0
-  [[ -n "$ctx" ]] && kube_len=$((${#ctx} + 3))
+  if [[ -n "$KUBE_PS1_CONTEXT" ]] && [[ "$KUBE_PS1_CONTEXT" != "N/A" ]]; then
+    # Visible: symbol(1) + context + : + namespace
+    kube_len=$((1 + ${#KUBE_PS1_CONTEXT} + 1 + ${#KUBE_PS1_NAMESPACE} + 1))  # +1 for space before
+  fi
 
   # Calculate separator length
   local left_len=$((time_len + 1 + path_len + git_len))
@@ -115,7 +95,7 @@ function build_prompt() {
   [[ -n "$branch" ]] && prompt_line="${prompt_line} %{$fg[magenta]%} ${branch}%{$reset_color%}"
   prompt_line="${prompt_line} %{$fg[yellow]%}${sep}%{$reset_color%}"
   [[ $exit_code -ne 0 ]] && prompt_line="${prompt_line}${exit_str}"
-  [[ -n "$ctx" ]] && prompt_line="${prompt_line} %{$fg[cyan]%}☸ %{$fg[red]%}${ctx}%{$reset_color%}"
+  [[ -n "$kube_info" ]] && prompt_line="${prompt_line} ${kube_info}"
 
   echo "${prompt_line}"
 }
@@ -193,6 +173,10 @@ alias kclean='kubectl get pods --all-namespaces \
   | xargs -n2 sh -c "kubectl delete pod \$1 -n \$0"'
 
 
+# Description: Search and filter Kubernetes pods by pattern and age with color-coded output
+# Usage: kpg [pattern] [min_age_seconds]
+# Example: kpg ContainerCreating 300  # Find pods creating for >5min
+# Example: kpg Error                   # Find all pods with Error status
 _kpg() {
   local pattern=${1:-ContainerCreating}
   local minage=${2:-0}
@@ -261,6 +245,10 @@ _kpg() {
 
 alias kpg=_kpg
 
+# Description: Generate a summary report of pod counts by namespace with status breakdown
+# Usage: kreport [min_age_seconds]
+# Example: kreport       # All pods
+# Example: kreport 600   # Only pods older than 10 minutes
 kreport() {
   local minage=${1:-0}
   local now=$(date -u +%s)
@@ -344,6 +332,11 @@ kreport() {
   | sed 's/^[0-9]*|//'
 }
 
+# Description: Quick kubectl action on a pod using namespace/pod format
+# Usage: kdig {shell|log|pod} namespace/podname
+# Example: kdig shell default/nginx-abc123     # Open shell in pod
+# Example: kdig log monitoring/prometheus-xyz  # Stream logs
+# Example: kdig pod kube-system/coredns-123   # Describe pod
 kdig() {
   local action=$1
   local ns_pod=$2
@@ -410,6 +403,9 @@ alias gclean="git clean -f -d -x"
 alias fmt='terraform fmt -recursive .'
 alias fmtc='terraform fmt -recursive . && git add -A && git commit -m "FMT" && git push'
 
+# Description: Start a tmux session with pre-configured windows for work, home, and downloads
+# Usage: tmux_start
+# Example: tmux_start   # Creates 'work' session with 3 windows
 function tmux_start() {
   tmux new-session -d -s work
   tmux send-keys -t work:1 'cd ~/project/' C-m
@@ -420,6 +416,10 @@ function tmux_start() {
   tmux attach-session -t work
 }
 
+# Description: Gracefully kill processes by name with escalating signals (SIGTERM, SIGINT, SIGHUP)
+# Usage: smash <process_name>
+# Example: smash chrome      # Kill all chrome processes
+# Example: smash python      # Kill all python processes
 smash () {
     local T_PROC=$1
     local T_PIDS=($(pgrep -i "$T_PROC"))
@@ -440,10 +440,18 @@ smash () {
     fi
 }
 
+# Description: Copy file contents to clipboard (using bat for syntax highlighting)
+# Usage: catclip <filename>
+# Example: catclip config.yaml    # Copy file to clipboard
+# Example: catclip script.sh      # Copy script to clipboard
 catclip() {
     bat --style=plain "$1" | xclip -sel clip
 }
 
+# Description: Run a command, display output, and copy both command and output to clipboard
+# Usage: tclip <command>
+# Example: tclip kubectl get pods           # Run and copy to clipboard
+# Example: tclip aws ec2 describe-instances # Run and copy output
 tclip() {
     local cmd="$@"
     local output
@@ -455,12 +463,18 @@ tclip() {
     } | xclip -sel clip
 }
 
+# Description: List all EC2 instances with key information in table format
+# Usage: aws_ec2_list
+# Example: aws_ec2_list   # Show all EC2 instances with ID, Name, IP, Status
 aws_ec2_list() {
   aws ec2 describe-instances \
     --query 'Reservations[*].Instances[*].{ID: InstanceId, Name: Tags[?Key==`Name`]|[0].Value, Hostname: Tags[?Key==`hostname`]|[0].Value, PrivateIP: PrivateIpAddress, Status: State.Name}' \
     --output table
 }
 
+# Description: Connect to EC2 instance via AWS Systems Manager Session Manager
+# Usage: aws_ec2_ssm_connect <instance-id>
+# Example: aws_ec2_ssm_connect i-1234567890abcdef0
 aws_ec2_ssm_connect() {
   if [ -z "$1" ]; then
     echo "Usage: aws_ec2_ssm_connect <instance-id>"
@@ -469,6 +483,9 @@ aws_ec2_ssm_connect() {
   aws ssm start-session --target "$1"
 }
 
+# Description: Show detailed information about a specific EC2 instance in JSON format
+# Usage: aws_ec2_details <instance-id>
+# Example: aws_ec2_details i-1234567890abcdef0
 aws_ec2_details() {
   if [ -z "$1" ]; then
     echo "Usage: aws_ec2_details <instance-id>"
@@ -492,20 +509,33 @@ aws_ec2_details() {
     --output json | jq -r '.[0] | to_entries[] | "\(.key): \(.value)"'
 }
 
+# Description: List all S3 buckets in your AWS account
+# Usage: aws_s3_list
+# Example: aws_s3_list   # Show all S3 buckets
 aws_s3_list() {
   aws s3 ls
 }
 
+# Description: List all FSx file systems in table format
+# Usage: aws_fsx_list
+# Example: aws_fsx_list   # Show all FSx file systems
 aws_fsx_list() {
   aws fsx describe-file-systems --output table
 }
 
+# Description: List all VPCs with their CIDR blocks in table format
+# Usage: aws_vpc_list
+# Example: aws_vpc_list   # Show all VPCs and their CIDR blocks
 aws_vpc_list() {
   aws ec2 describe-vpcs \
     --query 'Vpcs[*].{VPC_ID: VpcId, CIDR: CidrBlock}' \
     --output table
 }
 
+# Description: Record a screencast of a selected area using flameshot and ffmpeg
+# Usage: screencast
+# Example: screencast   # Opens selection tool, then records selected area to .mkv file
+# Note: Requires flameshot and ffmpeg installed
 screencast () {
     # Ask user to select a rectangle; flameshot prints WxH+X+Y
     local selection
@@ -566,9 +596,13 @@ bindkey '\t' menu-complete
 # ============================================================
 # LAZY LOAD NVM (much faster shell startup)
 # ============================================================
+# These functions defer loading NVM until first use, significantly speeding up shell startup
+# NVM adds ~400ms to shell startup if loaded immediately, this makes it instant
 export NVM_DIR="$HOME/.nvm"
 
-# Lazy load nvm - only load when actually needed
+# Description: Lazy-load wrapper for nvm - loads NVM on first use
+# Usage: nvm <command>
+# Example: nvm install 18   # First call loads NVM, then runs command
 nvm() {
   unset -f nvm node npm npx
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -576,6 +610,9 @@ nvm() {
   nvm "$@"
 }
 
+# Description: Lazy-load wrapper for node - loads NVM on first node usage
+# Usage: node <args>
+# Example: node script.js   # First call loads NVM, then runs node
 node() {
   unset -f nvm node npm npx
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -583,6 +620,9 @@ node() {
   node "$@"
 }
 
+# Description: Lazy-load wrapper for npm - loads NVM on first npm usage
+# Usage: npm <command>
+# Example: npm install      # First call loads NVM, then runs npm
 npm() {
   unset -f nvm node npm npx
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -590,6 +630,9 @@ npm() {
   npm "$@"
 }
 
+# Description: Lazy-load wrapper for npx - loads NVM on first npx usage
+# Usage: npx <package>
+# Example: npx cowsay hi    # First call loads NVM, then runs npx
 npx() {
   unset -f nvm node npm npx
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
