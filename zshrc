@@ -645,3 +645,5 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
 # eval "$(atuin init zsh)"
 # export PATH=/usr/local/go/bin:$PATH
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

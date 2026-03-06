@@ -21,12 +21,14 @@ workspace "$w3"   output $screen0
 workspace "$w4"   output $screen0
 workspace "$w5"   output $screen0
 
+for_window [workspace=$w2] layout tabbed
 for_window [workspace=$w3] layout tabbed
 
 
 assign [class="firefox"]     $w1
 assign [class="Google-chrome"]    $w2
 assign [title="Google Chrome"]    $w2
+assign [class="Chromium"]         $w2
 
 workspace "$w6"   output $screen1
 workspace "$w7"   output $screen1
@@ -41,6 +43,7 @@ assign [class="jetbrains-goland"]      $w3
 assign [class="Goland"]      $w3
 assign [class="code-oss"]      $w3
 assign [class="Cursor"]      $w3
+assign [class="Code"]         $w3
 
 assign [class="^[Zz]oom$"] $w5
 
@@ -54,7 +57,7 @@ set $w10 ~:Misc
 assign [class="Slack"]  $w6
 assign [class="TelegramDesktop"]       $w6
 assign [class="telegram"]       $w6
-# for_window [class="TelegramDesktop"] resize set width 480
+for_window [class="TelegramDesktop"] resize set width 30 ppt
 
 assign [class="signal"]        $w6
 for_window [class="signal"] resize set width 480
@@ -66,7 +69,7 @@ assign [class="Sunsama"]    $w7
 
 assign [class="obsidian"]    $w8
 
-assign [class="synergy"]    $w9
+for_window [class="synergy"] floating enable, resize set 900px 610px
 
 set $jail jail
 
@@ -317,7 +320,7 @@ focus_follows_mouse yes
 exec --no-startup-id urxvt -name 'scratchpad_urxvt'
 for_window [instance="scratchpad_urxvt"] floating enable, move scratchpad;
 bindsym $mod+Shift+x exec --no-startup-id urxvt +transparent -name 'scratchpad_urxvt'
-for_window [instance="scratchpad_urxvt"] move scratchpad; [instance="scratchpad_urxvt"] scratchpad show; resize set 1830px 850px; move position 35px 45px
+for_window [instance="scratchpad_urxvt"] move scratchpad; [instance="scratchpad_urxvt"] scratchpad show; resize set 90 ppt 85 ppt; move position center
 #scratchpad show; move position 0px 22px; resize shrink height 300px; resize grow width 683px; move scratchpad
 bindsym $mod+x [instance="scratchpad_urxvt"] scratchpad show
 
@@ -356,10 +359,10 @@ exec --no-startup-id "firefox"
 exec --no-startup-id "slack"
 exec --no-startup-id "telegram-desktop"
 exec --no-startup-id "spotify"
-exec --no-startup-id "cursor"
+exec --no-startup-id "code"
 exec --no-startup-id "todoist"
-# exec --no-startup-id "obsidian"
-exec --no-startup-id "synergy"
+exec --no-startup-id "chromium"
+exec --no-startup-id "synergy --minimized"
 # exec --no-startup-id "gromit-mpx"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock
