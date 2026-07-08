@@ -116,7 +116,7 @@ exec --no-startup-id "blueman-applet &"
 exec --no-startup-id "xfce4-clipman &"
 exec --no-startup-id "flameshot &"
 # start a terminal
-bindsym $mod+Return exec urxvt
+bindsym $mod+Return exec --no-startup-id warp-terminal
 
 # kill focused window
 bindsym $mod+q kill
@@ -316,20 +316,20 @@ focus_follows_mouse yes
 
 # exec_always --no-startup-id xsetroot -solid '#000000'
 
-# Scratchpad
-exec --no-startup-id urxvt -name 'scratchpad_urxvt'
-for_window [instance="scratchpad_urxvt"] floating enable, move scratchpad;
-bindsym $mod+Shift+x exec --no-startup-id urxvt +transparent -name 'scratchpad_urxvt'
-for_window [instance="scratchpad_urxvt"] move scratchpad; [instance="scratchpad_urxvt"] scratchpad show; resize set 90 ppt 85 ppt; move position center
-#scratchpad show; move position 0px 22px; resize shrink height 300px; resize grow width 683px; move scratchpad
-bindsym $mod+x [instance="scratchpad_urxvt"] scratchpad show
+# Scratchpad (generic: Warp has no per-window instance name, so use i3's own scratchpad)
+# $mod+Shift+x : send focused window to the scratchpad
+# $mod+x       : toggle a dropdown Warp terminal in the scratchpad
+# $mod+Shift+x : send the focused window to the scratchpad
+bindsym $mod+Shift+x move scratchpad
+bindsym $mod+x exec --no-startup-id ~/bin/warp-scratch.sh
 
 ## Spotify
 bindsym $mod+m [con_mark="music"] scratchpad show
 for_window [class="Spotify"] mark "music", move scratchpad
 for_window [class="Spotify"] floating enable, resize set 900px 610px
 bindsym $mod+$mark+m exec --no-startup-id spotify
-bindsym $mod+Shift+m exec "urxvt -e sh -c 'bash ~/bin/spotify/lyrics.sh spotify; fish'"
+# Warp has no `-e <command>` launcher like urxvt; run the lyrics helper in a normal terminal instead
+bindsym $mod+Shift+m exec "warp-terminal"
 
 ## PulseAudio Volume Control
 bindsym $mod+p [con_mark="pulseaudio"] scratchpad show
@@ -348,9 +348,9 @@ exec --no-startup-id "samwise"
 #bindsym $mod+o [con_mark="alpha"] scratchpad show
 
 # <clientclass> <border> <backg> <text> <indicator>
-client.focused          $llightblue $lightyellow $black $lightblue
+client.focused          $lightblue $lightyellow $black $lightblue
 client.focused_inactive $darkgrey $white $black $darkgrey
-client.unfocused        $lightblue $gray $black $lightblue
+client.unfocused        $lightblue $grey $black $lightblue
 client.urgent $lightred $red $white $lightred
 
 # start apps
@@ -362,7 +362,9 @@ exec --no-startup-id "spotify"
 exec --no-startup-id "code"
 exec --no-startup-id "todoist"
 exec --no-startup-id "chromium"
-exec --no-startup-id "synergy --minimized"
+# Synergy 3 (Electron app at /opt/Synergy/synergy; the old `synergy --minimized`
+# was a Synergy-1 flag that v3 ignores). Launches the GUI/tray on login.
+exec --no-startup-id ~/bin/synergy-start.sh
 # exec --no-startup-id "gromit-mpx"
 #exec --no-startup-id "google-chrome"
 exec --no-startup-id xautolock -time 3 -locker lock

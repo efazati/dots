@@ -31,10 +31,12 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-# Enable kubectl completions for short aliases (zsh style)
-compdef k=kubectl
-compdef k8=kubectl
-compdef k8s=kubectl
+# Enable kubectl completions for short aliases (zsh style) — only if kubectl exists
+if (( $+commands[kubectl] )); then
+  compdef k=kubectl
+  compdef k8=kubectl
+  compdef k8s=kubectl
+fi
 
 # ============================================================
 # FANCY PROMPT with kube-ps1 plugin
@@ -82,7 +84,22 @@ function build_prompt() {
   fi
 
   # Calculate separator length
-  local left_len=$((time_len + 1 + path_len + git_len))
+  # Environment badge — set PROMPT_ENV per node (e.g. in ~/.zshrc.personal: PROMPT_ENV="prod").
+  # Auto-colored so prod screams at you. Hidden entirely when PROMPT_ENV is unset.
+  local env_badge="" env_len=0
+  if [[ -n "$PROMPT_ENV" ]]; then
+    local env_color
+    case "${PROMPT_ENV:l}" in
+      prod*|prd|live)     env_color="$bg[red]$fg[white]" ;;
+      stg*|stag*|uat)     env_color="$bg[yellow]$fg[black]" ;;
+      dev*|local*|test*)  env_color="$bg[green]$fg[black]" ;;
+      *)                  env_color="$bg[blue]$fg[white]" ;;
+    esac
+    env_badge="%{$env_color%} ${PROMPT_ENV} %{$reset_color%} "
+    env_len=$(( ${#PROMPT_ENV} + 3 ))   # 2 padding spaces + 1 trailing space
+  fi
+
+  local left_len=$((env_len + time_len + 1 + path_len + git_len))
   local right_len=$((exit_len + kube_len))
   local separator_len=$((term_width - left_len - right_len - 2))
   [[ $separator_len -lt 3 ]] && separator_len=3
@@ -91,7 +108,7 @@ function build_prompt() {
   local sep=$(printf '━%.0s' {1..$separator_len})
 
   # Build the fancy prompt
-  local prompt_line="%{$fg[cyan]%}[%*]%{$reset_color%} %{$fg[green]%}%~%{$reset_color%}"
+  local prompt_line="${env_badge}%{$fg[cyan]%}[%*]%{$reset_color%} %{$fg[green]%}%~%{$reset_color%}"
   [[ -n "$branch" ]] && prompt_line="${prompt_line} %{$fg[magenta]%} ${branch}%{$reset_color%}"
   prompt_line="${prompt_line} %{$fg[yellow]%}${sep}%{$reset_color%}"
   [[ $exit_code -ne 0 ]] && prompt_line="${prompt_line}${exit_str}"
@@ -117,6 +134,10 @@ alias s='sudo'
 alias vi='vim'
 alias sl='ls'
 alias v='vagrant'
+# Debian/Ubuntu ship bat as `batcat`; alias it back to `bat` when needed
+if ! (( $+commands[bat] )) && (( $+commands[batcat] )); then
+  alias bat='batcat'
+fi
 alias cat='bat'
 alias catt='bat --style=plain'
 alias less='bat'
