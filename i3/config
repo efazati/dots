@@ -318,9 +318,7 @@ focus_follows_mouse yes
 
 # Scratchpad (generic: Warp has no per-window instance name, so use i3's own scratchpad)
 # $mod+Shift+x : send focused window to the scratchpad
-# $mod+x       : toggle a dropdown Warp terminal in the scratchpad
-# $mod+Shift+x : send the focused window to the scratchpad
-bindsym $mod+Shift+x move scratchpad
+# $mod+x : toggle a dropdown Warp terminal in the scratchpad
 bindsym $mod+x exec --no-startup-id ~/bin/warp-scratch.sh
 
 ## Spotify
