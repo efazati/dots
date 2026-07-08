@@ -1,0 +1,69 @@
+[appearance]
+spacing = "compact"
+
+[appearance.themes]
+system_theme = false
+
+[appearance.vertical_tabs]
+enabled = false
+
+[appearance.text]
+notebook_font_size = 14.0
+font_size = 16.0
+font_name = "Monaco"
+line_height_ratio = 1.3
+match_notebook_to_monospace_font_size = false
+
+[appearance.tabs]
+
+[appearance.tabs.header_toolbar_chip_selection]
+
+[appearance.tabs.header_toolbar_chip_selection.custom]
+left = []
+right = ["code_review", "tools_panel", "notifications_mailbox"]
+
+[general]
+default_session_mode = "agent"
+
+[agents]
+
+[agents.third_party]
+should_render_cli_agent_toolbar = true
+
+[agents.warp_agent]
+is_any_ai_enabled = false
+
+[agents.warp_agent.other]
+show_agent_notifications = true
+show_conversation_history = true
+
+[code]
+
+[code.editor]
+show_code_review_button = true
+show_project_explorer = true
+show_global_search = true
+
+[warp_drive]
+enabled = true
+
+[notifications]
+toast_duration_secs = 8
+
+[notifications.preferences]
+is_agent_task_completed_enabled = true
+is_long_running_enabled = true
+is_needs_attention_enabled = true
+is_password_prompt_enabled = true
+long_running_threshold = 30
+mode = "dismissed"
+play_notification_sound = true
+
+[system]
+prefer_low_power_gpu = false
+
+[terminal]
+
+[terminal.input]
+input_box_type_setting = "classic"
+honor_ps1 = true

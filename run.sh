@@ -65,6 +65,13 @@ ln -s $(realpath ./polybar) $HOME/.config/
 ln -s $(realpath ./rofi) $HOME/.config/
 ln -s $(realpath ./dunst) $HOME/.config/
 
+# Warp terminal — symlink config FILES only (never the whole dir: it also holds
+# warp.sqlite state + user_preferences.json which must stay local, not in git).
+mkdir -p $HOME/.config/warp-terminal
+ln -sfn $(realpath ./warp/settings.toml)    $HOME/.config/warp-terminal/settings.toml
+ln -sfn $(realpath ./warp/keybindings.yaml) $HOME/.config/warp-terminal/keybindings.yaml
+ln -sfn $(realpath ./warp/themes)           $HOME/.config/warp-terminal/themes
+
 rm -rf $HOME/.urxvt
 ln -s $(realpath ./urxvt) $HOME/.urxvt
 rm -rf $HOME/.tmux
