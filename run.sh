@@ -131,9 +131,11 @@ apt update && apt install 1password-cli
 ### Docker
 sh -c "$(curl -fsSL https://get.docker.com )"
 
-### Cursor / VSCode
-rm -rf ~/.config/Cursor/User/keybindings.json
-ln -s $(realpath vscode/keybindings.json) ~/.config/Cursor/User/keybindings.json
-rm -rf ~/.config/Cursor/User/settings.json
-ln -s $(realpath vscode/settings.json) ~/.config/Cursor/User/settings.json
+### VSCode / Cursor — link our config into whichever editors are present
+for ed in Code Cursor; do
+  d="$HOME/.config/$ed/User"
+  mkdir -p "$d"
+  ln -sfn "$(realpath vscode/settings.json)"    "$d/settings.json"
+  ln -sfn "$(realpath vscode/keybindings.json)" "$d/keybindings.json"
+done
 ln -s $(realpath ./gromit-mpx.cfg) ~/.config/gromit-mpx.cfg
