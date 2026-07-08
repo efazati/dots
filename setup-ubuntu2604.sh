@@ -16,8 +16,8 @@ PKGS=(
   # Xorg input drivers — Ubuntu 26.04 is Wayland-first and ships without these,
   # so an Xorg session (i3) has NO working mouse/keyboard until they're installed.
   xserver-xorg-input-all xserver-xorg-input-libinput xinit
-  # terminal-adjacent / shell (zsh deps: oh-my-zsh installed below; fzf/jq used by zshrc)
-  zsh git curl vim tmux bat autojump htop fzf jq
+  # terminal-adjacent / shell (zsh deps: oh-my-zsh installed below; fzf/jq/kubectx used by zshrc)
+  zsh git curl vim tmux bat autojump htop fzf jq kubectx
   zsh-autosuggestions zsh-syntax-highlighting
   # tray / desktop helpers used by the i3 config
   network-manager-gnome blueman bluez xfce4-clipman xfce4-screenshooter flameshot

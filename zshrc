@@ -180,8 +180,8 @@ alias kpv="kubectl get pv"
 alias kpvc="kubectl get pvc --all-namespaces"
 alias kpvcd="kubectl describe pvc"
 alias kexec='function _kexec(){ kubectl exec -it $1 -n $2 -- bash; }; _kexec'
-alias kctx='kubectl-ctx'
-alias kns='kubectl-ns'
+alias kctx='kubectx'
+alias kns='kubens'
 
 # alias kctx="kubectl config get-contexts"
 alias kprod="kubectl config use-context prod"
