@@ -87,10 +87,16 @@ ln -s $(realpath ./tmux.conf) $HOME/.tmux.conf
 rm -rf $HOME/.zshrc
 ln -s $(realpath ./zshrc) $HOME/.zshrc
 
-mkdir -p $HOME/bin/screen
-ln -s /home/efazati/.screenlayout/1mon.sh $HOME/bin/screen/default.sh
-
-ln -sfn $(realpath ./bin/warp-scratch.sh) $HOME/bin/warp-scratch.sh
+# Every script in bin/, not just the one that happened to be needed last. The
+# i3 config calls external.sh, default-screen.sh and synergy-start.sh by path,
+# and linking them one at a time is how two of the three came to point at files
+# that were never there.
+mkdir -p $HOME/bin
+for f in ./bin/*.sh ./bin/*.py; do
+    [ -e "$f" ] || continue
+    ln -sfn "$(realpath "$f")" "$HOME/bin/$(basename "$f")"
+done
+chmod +x ./bin/*.sh
 
 
 sudo chmod a+rw $OH_ZSH_PATH

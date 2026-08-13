@@ -2,7 +2,12 @@ set $mod Mod4
 set $mark Ctrl
 set $alt Mod1
 set $screen1 DisplayPort-1
-set $screen0 DisplayPort-0 #prim
+# No trailing comment on a `set` line: i3 only treats # as a comment at the
+# start of a line, so `set $screen0 DisplayPort-0 #prim` made $screen0 the
+# literal string "DisplayPort-0 #prim" and every `output $screen0` below it
+# silently matched nothing.
+# $screen0 is the primary.
+set $screen0 DisplayPort-0
 
 set $laptop eDP
 # set $screen2 HDMI-A-0
@@ -30,12 +35,6 @@ assign [class="Google-chrome"]    $w2
 assign [title="Google Chrome"]    $w2
 assign [class="Chromium"]         $w2
 
-workspace "$w6"   output $screen1
-workspace "$w7"   output $screen1
-workspace "$w8"   output $screen1
-workspace "$w9"   output $screen1
-workspace "$w0"   output $screen1
-
 assign [class="Thunar"] 	 $w4
 # Code
 assign [class="pycharm"]      $w3
@@ -54,6 +53,16 @@ set $w8  8:Note
 set $w9  9:Syn
 set $w10 ~:Misc
 
+# These have to come after the set lines above. i3 substitutes variables in file
+# order, so the block that used to sit up beside the screen0 one was writing the
+# literal text "$w6" and pinning nothing. The last one also named $w0, which is
+# not a variable this file ever defines.
+workspace "$w6"   output $screen1
+workspace "$w7"   output $screen1
+workspace "$w8"   output $screen1
+workspace "$w9"   output $screen1
+workspace "$w10"  output $screen1
+
 assign [class="Slack"]  $w6
 assign [class="TelegramDesktop"]       $w6
 assign [class="telegram"]       $w6
@@ -70,8 +79,6 @@ assign [class="Sunsama"]    $w7
 assign [class="obsidian"]    $w8
 
 for_window [class="synergy"] floating enable, resize set 900px 610px
-
-set $jail jail
 
 # switch to workspace
 # bindsym $mod+grave workspace $w0
@@ -123,49 +130,46 @@ bindsym $mod+q kill
 
 # start dmenu (a program launcher)
 bindsym $mod+space exec --no-startup-id rofi -show drun -show-icons
-bindsym $alt+Tab exec --no-startup-id rofi -show window -show-iconsalt
+bindsym $alt+Tab exec --no-startup-id rofi -show window -show-icons
 #bindsym $mod+$mark+space exec --no-startup-id rofi  -show trans_ -modi trans_:alt~/.config/rofi/translate.py
 bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy:~/.config/rofi/handy.py
 #bindsym $mod+$mark+space exec --no-startup-id rofi_verbose
 #bindsym $mod+space exec --no-startup-id dmenu_run
 
-bindsym $mod+F1 exec --no-startup-id firefox
-bindsym $mod+Shift+F1 exec --no-startup-id google-chrome-stable
-bindsym $mod+F5 exec --no-startup-id telegram-desktop
-bindsym $mod+F3 [class="Cursor"] focus
-# bindsym $mod+F3 [class="code-oss"] focus
-bindsym $mod+Shift+F3 exec --no-startup-id code
-bindsym $mod+F4 exec --no-startup-id todoist
-bindsym $mod+F2 exec --no-startup-id obsidian
+# Apps, on the first letter of the app rather than on a function key. F1..F12 are
+# the furthest keys from the home row, they are unlabelled in the dark, and half
+# of them are already claimed by whatever app has focus.
+bindsym $mod+f exec --no-startup-id firefox
+bindsym $mod+c exec --no-startup-id google-chrome-stable
+bindsym $mod+t exec --no-startup-id telegram-desktop
+bindsym $mod+n exec --no-startup-id obsidian
+bindsym $mod+d exec --no-startup-id todoist
+bindsym $mod+s exec --no-startup-id slack
+# i for IDE: focus the editor if it is running, Shift to start VS Code.
+bindsym $mod+i [class="Cursor"] focus
+bindsym $mod+Shift+i exec --no-startup-id code
+# Firefox on a search, which is what $mod+t used to do before telegram took it.
+bindsym $mod+Shift+t exec --no-startup-id firefox --new-tab --url google.com
+
 # bindsym $mod+b exec --no-startup-id  xfce4-screenshooter -c -r
 bindsym $mod+b exec --no-startup-id  flameshot gui
-bindsym $mod+s exec --no-startup-id slack
 
-bindsym $mod+$mark+F7 exec --no-startup-id bash ~/bin/screen/external.sh
-bindsym $mod+F7 exec --no-startup-id bash ~/bin/screen/default.sh
-# bindsym $mod+F8 exec --no-startup-id bash ~/bin/screen/home.sh
+# Screen layouts. Both scripts live in this repo under bin/ and run.sh links
+# them into ~/bin, so they are named there rather than under ~/bin/screen/,
+# which is where the old bindings looked and where only default.sh ever was.
+bindsym $mod+Shift+d exec --no-startup-id bash ~/bin/default-screen.sh
+bindsym $mod+Shift+a exec --no-startup-id bash ~/bin/external.sh
 
-bindsym $mod+Shift+G exec --no-startup-id "gromit-mpx --active"
+# Annotation. --active and --toggle both toggle painting, so the near-duplicate
+# went and its key now carries --visibility, which frees $mod+f for firefox.
 bindsym $mod+g exec --no-startup-id "gromit-mpx --toggle"
+bindsym $mod+Shift+g exec --no-startup-id "gromit-mpx --visibility"
 bindsym $mod+r exec --no-startup-id "gromit-mpx --clear"
-bindsym $mod+f exec --no-startup-id "gromit-mpx --visibility"
-bindsym $mod+Ctrl+9 exec --no-startup-id "gromit-mpx --undo"
-bindsym $mod+Ctrl+0 exec --no-startup-id "gromit-mpx --redo"
+bindsym $mod+$mark+9 exec --no-startup-id "gromit-mpx --undo"
+bindsym $mod+$mark+0 exec --no-startup-id "gromit-mpx --redo"
 
-# bindsym $mod+$mark+F9 exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
-# bindsym $mod+F9 exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
-# bindsym $mod+F12 exec --no-startup-id "systemctl suspend"
-#bindsym $mod+z exec --no-startup-id bash ~/.config/i3/todo.sh
-# bindsym $mod+v exec --no-startup-id joplin
-# bindsym $mod+j exec --no-startup-id joplin
-#bindsym $mod+$mark+F2 exec --no-startup-id thunar-volman-settings
-#bindsym $mod+Shift+F2 exec bingpic.sh
-
-#bindsym $mod+l exec /bin/lock
 bindsym $mod+l exec i3lock -t -i ~/images/lock.png
 bindsym $mod+$mark+q exec i3lock -t -i ~/images/lock.png
-
-bindsym $mod+t exec firefox --new-tab --url google.com
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -191,16 +195,17 @@ bindsym $mod+$mark+x fullscreen
 bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+z workspace back_and_forth
 bindsym $mod+v move container to workspace back_and_forth
-bindsym $mod+comma  move workspace to output up
-bindsym $mod+period move workspace to output left
+bindsym $mod+comma  move workspace to output left
+bindsym $mod+period move workspace to output right
 
 # change container layout (stacked, tabbed, default)
 #bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout default
 
-# toggle tiling / floating
-bindsym $mod+Shift+T floating toggle
+# toggle tiling / floating. i3's own default, and $mod+Shift+t is telegram's
+# search binding now.
+bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
 #bindsym $mod+f focus mode_toggle
@@ -284,6 +289,11 @@ for_window [class="Goland"] layout tabbed
 for_window [class="Sublime"] layout tabbed
 for_window [class="subl"] layout tabbed
 
+# The catch-all goes first. Rules apply in order and the last match wins, so
+# with this at the bottom it overrode every `border normal` above it and those
+# lines did nothing.
+for_window [class=".*"] border pixel 1
+
 for_window [title="alsamixer"] floating enable border pixel 1
 for_window [class="Skype"] floating enable border normal
 
@@ -294,7 +304,6 @@ for_window [instance="Download" class="Firefox"] floating enable
 # for_window [class="Xfce4-notifyd"] border none
 for_window [class="Xfce4-notifyd"] floating enable
 for_window [class="Lazarus"] floating enable
-for_window [class=".*"] border pixel 1
 
 for_window [title="Picture-in-Picture" class="firefox.*"] mark "fpip", move scratchpad, floating enable
 for_window [title="Picture-in-Picture" class="firefox.*"] sticky enable
@@ -326,8 +335,6 @@ bindsym $mod+m [con_mark="music"] scratchpad show
 for_window [class="Spotify"] mark "music", move scratchpad
 for_window [class="Spotify"] floating enable, resize set 900px 610px
 bindsym $mod+$mark+m exec --no-startup-id spotify
-# Warp has no `-e <command>` launcher like urxvt; run the lyrics helper in a normal terminal instead
-bindsym $mod+Shift+m exec "warp-terminal"
 
 ## PulseAudio Volume Control
 bindsym $mod+p [con_mark="pulseaudio"] scratchpad show
@@ -365,4 +372,7 @@ exec --no-startup-id "chromium"
 exec --no-startup-id ~/bin/synergy-start.sh
 # exec --no-startup-id "gromit-mpx"
 #exec --no-startup-id "google-chrome"
-exec --no-startup-id xautolock -time 3 -locker lock
+# The same lock the two lock bindings use. `-locker lock` named a binary that
+# neither this repo nor run.sh ever puts on PATH, so the autolock fired and
+# then failed, and the screen stayed up.
+exec --no-startup-id xautolock -time 3 -locker "i3lock -t -i $HOME/images/lock.png"
