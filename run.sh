@@ -54,6 +54,10 @@ sudo chsh efazati -s /bin/zsh
 
 mkdir -p $HOME/.fonts/
 cp ./fonts/monaco.ttf $HOME/.fonts/
+# Vazirmatn NL carries Persian only, no Latin. fontconfig/conf.d/99-persian.conf
+# puts it at the head of every generic family so Persian stops falling on
+# DejaVu's poor Arabic glyphs while Latin keeps coming from DejaVu.
+cp ./fonts/Vazirmatn-NL-*.ttf $HOME/.fonts/
 fc-cache -fv
 
 OH_ZSH_PATH="$HOME/.oh-my-zsh"
@@ -64,6 +68,7 @@ ln -s $(realpath ./i3) $HOME/.config/
 ln -s $(realpath ./polybar) $HOME/.config/
 ln -s $(realpath ./rofi) $HOME/.config/
 ln -s $(realpath ./dunst) $HOME/.config/
+ln -s $(realpath ./fontconfig) $HOME/.config/
 
 # Warp terminal — symlink config FILES only (never the whole dir: it also holds
 # warp.sqlite state + user_preferences.json which must stay local, not in git).
