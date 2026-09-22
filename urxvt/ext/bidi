@@ -1,0 +1,354 @@
+#! perl
+# RTL / Persian support for rxvt-unicode, which has no bidi or shaping of its own.
+#
+# Display-only: just before each redraw every visible row that contains
+# Arabic-script or Hebrew text is (1) shaped: Arabic letters are swapped for
+# their contextual presentation forms (initial / medial / final / isolated),
+# and (2) reordered into visual order with a simplified Unicode bidi
+# algorithm (numbers stay left-to-right, brackets mirrored). The original row is put
+# back right after the redraw, so selection, copy/paste and the program
+# running in the terminal all keep seeing the logical text.
+#
+# Zero-width format characters (ZWNJ, LRM, ...) are dropped on input because
+# urxvt cannot store them; words with a ZWNJ are therefore drawn joined.
+#
+# Known limits: the cursor is drawn at its logical column, so while typing
+# Persian it sits at the mirrored spot; lam-alef is drawn as two joined
+# letters rather than the single ligature (a ligature would change the cell
+# count).
+#
+# Needs a font with the Arabic Presentation Forms (e.g. Vazirmatn NL) in
+# URxvt.font. Enable with: URxvt.perl-ext: ...,bidi
+# Disable per window at runtime with the action bidi:toggle.
+#
+# URxvt.bidi.base: ltr (default) keeps every line left-to-right with the
+# Persian runs inside it reversed, which is what TUIs and prompts expect.
+# auto takes each line's direction from its first strong character, so a
+# line that starts in Persian reads fully right-to-left, but it also flips
+# things like bat's line-number gutter.
+
+use strict;
+use warnings;
+
+# base => [isolated, final, initial, medial]; two-element entries only join
+# to the letter before them (right-joining).
+my %FORMS = (
+   0x0622 => [0xFE81, 0xFE82],                 # آ
+   0x0623 => [0xFE83, 0xFE84],                 # أ
+   0x0624 => [0xFE85, 0xFE86],                 # ؤ
+   0x0625 => [0xFE87, 0xFE88],                 # إ
+   0x0626 => [0xFE89, 0xFE8A, 0xFE8B, 0xFE8C], # ئ
+   0x0627 => [0xFE8D, 0xFE8E],                 # ا
+   0x0628 => [0xFE8F, 0xFE90, 0xFE91, 0xFE92], # ب
+   0x0629 => [0xFE93, 0xFE94],                 # ة
+   0x062A => [0xFE95, 0xFE96, 0xFE97, 0xFE98], # ت
+   0x062B => [0xFE99, 0xFE9A, 0xFE9B, 0xFE9C], # ث
+   0x062C => [0xFE9D, 0xFE9E, 0xFE9F, 0xFEA0], # ج
+   0x062D => [0xFEA1, 0xFEA2, 0xFEA3, 0xFEA4], # ح
+   0x062E => [0xFEA5, 0xFEA6, 0xFEA7, 0xFEA8], # خ
+   0x062F => [0xFEA9, 0xFEAA],                 # د
+   0x0630 => [0xFEAB, 0xFEAC],                 # ذ
+   0x0631 => [0xFEAD, 0xFEAE],                 # ر
+   0x0632 => [0xFEAF, 0xFEB0],                 # ز
+   0x0633 => [0xFEB1, 0xFEB2, 0xFEB3, 0xFEB4], # س
+   0x0634 => [0xFEB5, 0xFEB6, 0xFEB7, 0xFEB8], # ش
+   0x0635 => [0xFEB9, 0xFEBA, 0xFEBB, 0xFEBC], # ص
+   0x0636 => [0xFEBD, 0xFEBE, 0xFEBF, 0xFEC0], # ض
+   0x0637 => [0xFEC1, 0xFEC2, 0xFEC3, 0xFEC4], # ط
+   0x0638 => [0xFEC5, 0xFEC6, 0xFEC7, 0xFEC8], # ظ
+   0x0639 => [0xFEC9, 0xFECA, 0xFECB, 0xFECC], # ع
+   0x063A => [0xFECD, 0xFECE, 0xFECF, 0xFED0], # غ
+   0x0641 => [0xFED1, 0xFED2, 0xFED3, 0xFED4], # ف
+   0x0642 => [0xFED5, 0xFED6, 0xFED7, 0xFED8], # ق
+   0x0643 => [0xFED9, 0xFEDA, 0xFEDB, 0xFEDC], # ك
+   0x0644 => [0xFEDD, 0xFEDE, 0xFEDF, 0xFEE0], # ل
+   0x0645 => [0xFEE1, 0xFEE2, 0xFEE3, 0xFEE4], # م
+   0x0646 => [0xFEE5, 0xFEE6, 0xFEE7, 0xFEE8], # ن
+   0x0647 => [0xFEE9, 0xFEEA, 0xFEEB, 0xFEEC], # ه
+   0x0648 => [0xFEED, 0xFEEE],                 # و
+   0x0649 => [0xFEEF, 0xFEF0],                 # ى
+   0x064A => [0xFEF1, 0xFEF2, 0xFEF3, 0xFEF4], # ي
+   0x067E => [0xFB56, 0xFB57, 0xFB58, 0xFB59], # پ
+   0x0686 => [0xFB7A, 0xFB7B, 0xFB7C, 0xFB7D], # چ
+   0x0698 => [0xFB8A, 0xFB8B],                 # ژ
+   0x06A9 => [0xFB8E, 0xFB8F, 0xFB90, 0xFB91], # ک
+   0x06AF => [0xFB92, 0xFB93, 0xFB94, 0xFB95], # گ
+   0x06CC => [0xFBFC, 0xFBFD, 0xFBFE, 0xFBFF], # ی
+);
+my $TATWEEL = 0x0640;
+my $ZWNJ    = "\x{200C}";
+# zero-width format characters (ZWNJ, ZWJ, LRM/RLM, embeddings, isolates)
+my $FORMAT_RE = qr/[\x{200B}-\x{200F}\x{202A}-\x{202E}\x{2066}-\x{2069}]/;
+
+my %MIRROR = map { ord } qw/( ) ) ( [ ] ] [ { } } { < > > </;
+$MIRROR{0xAB} = 0xBB; $MIRROR{0xBB} = 0xAB;
+
+my $RTL_RE = qr/[\x{0590}-\x{085F}\x{08A0}-\x{08FF}\x{FB1D}-\x{FDFF}\x{FE70}-\x{FEFC}]/;
+
+sub on_init {
+   my ($self) = @_;
+   $self->{enabled} = 1;
+   $self->{auto_base} = lc($self->x_resource('%.base') // 'ltr') eq 'auto';
+   $self->{saved}   = [];
+   ()
+}
+
+# urxvt mangles zero-width format characters on the way in (a letter followed
+# by ZWNJ is stored as '?', losing the letter), so drop them before they reach
+# the screen. They have no width, so programs' cursor maths is unaffected.
+sub on_add_lines {
+   my ($self, $str) = @_;
+   return () unless $str =~ $FORMAT_RE;
+   $str =~ s/$FORMAT_RE//g;
+   $self->scr_add_lines($str);
+   1
+}
+
+sub on_action {
+   my ($self, $action) = @_;
+   if ($action eq 'toggle') {
+      $self->{enabled} = !$self->{enabled};
+      $self->want_refresh;
+   }
+   ()
+}
+
+# returns 'R', 'L', 'N' (number) or 'W' (neutral / whitespace)
+sub char_class {
+   my ($c) = @_;
+   return 'N' if $c =~ /[0-9\x{0660}-\x{0669}\x{06F0}-\x{06F9}]/;
+   return 'R' if $c =~ $RTL_RE;
+   return 'L' if $c =~ /[\p{L}\p{M}]/;
+   'W';
+}
+
+# joining type of a (base) code point: 'D' dual, 'R' right-only, '' none
+sub join_type {
+   my ($cp) = @_;
+   return 'D' if $cp == $TATWEEL;
+   my $f = $FORMS{$cp} or return '';
+   @$f == 4 ? 'D' : 'R';
+}
+
+sub on_refresh_begin {
+   my ($self) = @_;
+   return () unless $self->{enabled};
+
+   my $ncol  = $self->ncol;
+   my $top   = $self->view_start;
+   my $saved = $self->{saved} = [];
+
+   for my $row ($top .. $top + $self->nrow - 1) {
+      my $text = $self->ROW_t($row);
+      next unless defined $text && length $text;
+      # quick reject: nothing right-to-left and nothing composed on this row
+      next unless $text =~ $RTL_RE || $text =~ /[^\x{0}-\x{FFFF}]/;
+
+      my @chars = split //, $text;
+      my $rend  = $self->ROW_r($row);
+
+      # cells: base char, trailing combining string, and the original cells
+      # (a wide char's NOCHAR filler travels with it)
+      my @cells;
+      for my $i (0 .. $#chars) {
+         my $c = $chars[$i];
+         if ($c eq $urxvt::NOCHAR && @cells) {
+            push @{ $cells[-1]{raw} }, $i;
+            next;
+         }
+         my $dec  = $self->special_decode($c);
+         my $base = length $dec ? substr($dec, 0, 1) : ' ';
+         push @cells, {
+            base  => $base,
+            rest  => length $dec > 1 ? substr($dec, 1) : '',
+            raw   => [$i],
+            class => char_class($base),
+         };
+      }
+      next unless grep { $_->{class} eq 'R' } @cells;
+
+      push @$saved, [$row, $text, [@$rend]];
+
+      shape(\@cells);
+      my $order = visual_order(\@cells, $self->{auto_base});
+      next unless $order;
+
+      my (@new_t, @new_r);
+      for my $k (@$order) {
+         my $cell = $cells[$k];
+         my ($first, @fill) = @{ $cell->{raw} };
+         my $ch = $cell->{shaped} // $cell->{base};
+         my $rest = $cell->{rest};
+         if ($ch =~ $FORMAT_RE) { $ch = ' '; $cell->{changed} = 1 }
+         $cell->{changed} = 1 if $rest =~ s/$FORMAT_RE//g;
+         $ch = chr $MIRROR{ord $ch} if $cell->{odd} && exists $MIRROR{ord $ch};
+         my $enc = ($cell->{changed} || $cell->{odd})
+            ? $self->special_encode($ch . $rest)
+            : $chars[$first];
+         push @new_t, $enc, map { $chars[$_] } @fill;
+         push @new_r, map { $rend->[$_] } $first, @fill;
+      }
+      my $new = join '', @new_t;
+      next unless length $new == length $text;
+
+      $self->ROW_t($row, $new);
+      $self->ROW_r($row, \@new_r);
+   }
+   ()
+}
+
+sub on_refresh_end {
+   my ($self) = @_;
+   for my $s (@{ $self->{saved} || [] }) {
+      my ($row, $text, $rend) = @$s;
+      $self->ROW_t($row, $text);
+      $self->ROW_r($row, $rend);
+   }
+   $self->{saved} = [];
+   ()
+}
+
+# contextual forms, on logical order
+sub shape {
+   my ($cells) = @_;
+   for my $i (0 .. $#$cells) {
+      my $cell = $cells->[$i];
+      my $cp   = ord $cell->{base};
+      my $f    = $FORMS{$cp} or next;
+      my $jt   = @$f == 4 ? 'D' : 'R';
+
+      my $prev = $i > 0 ? $cells->[$i - 1] : undef;
+      my $next = $i < $#$cells ? $cells->[$i + 1] : undef;
+
+      my $join_prev = $prev
+         && join_type(ord $prev->{base}) eq 'D'
+         && index($prev->{rest}, $ZWNJ) < 0;
+      my $join_next = $jt eq 'D' && $next
+         && join_type(ord $next->{base}) ne ''
+         && index($cell->{rest}, $ZWNJ) < 0;
+
+      my $form = $join_prev && $join_next ? 3
+               : $join_prev               ? 1
+               : $join_next               ? 2
+               :                            0;
+      $cell->{shaped}  = chr $f->[$form];
+      $cell->{changed} = 1;
+   }
+}
+
+# simplified UBA for one line; returns cell indices in visual order
+sub visual_order {
+   my ($cells, $auto_base) = @_;
+   my $n = @$cells;
+
+   # only reorder the span between the first and last non-blank cell, so
+   # text stays where the program put it on the row
+   my ($lo, $hi) = (0, $n - 1);
+   $lo++ while $lo <= $hi && $cells->[$lo]{base} =~ /\s/;
+   $hi-- while $hi >= $lo && $cells->[$hi]{base} =~ /\s/;
+   return if $lo > $hi;
+
+   my @cls = map { $cells->[$_]{class} } $lo .. $hi;
+   my ($first_strong) = grep { $_ eq 'R' || $_ eq 'L' } @cls;
+   my $base = $auto_base && ($first_strong // 'L') eq 'R' ? 1 : 0;
+
+   # a separator between two digits is part of the number (1.5, 12:30, 1,000)
+   for my $i (1 .. $#cls - 1) {
+      my $c = $cells->[$lo + $i]{base};
+      $cls[$i] = 'N'
+         if $cls[$i] eq 'W' && $c =~ m{[.,:/\x{066B}\x{066C}]}
+         && $cls[$i - 1] eq 'N' && $cls[$i + 1] eq 'N';
+   }
+
+   # numbers: level depends on the strong direction before them
+   my @lvl;
+   my $last_strong = $base ? 'R' : 'L';
+   for my $i (0 .. $#cls) {
+      my $c = $cls[$i];
+      if    ($c eq 'R') { $lvl[$i] = 1; $last_strong = 'R' }
+      elsif ($c eq 'L') { $lvl[$i] = $base ? 2 : 0; $last_strong = 'L' }
+      elsif ($c eq 'N') { $lvl[$i] = ($base || $last_strong eq 'R') ? 2 : 0 }
+   }
+
+   # paired brackets (N0): a pair takes the base direction if that occurs
+   # inside it, else the opposite direction if that occurs inside and also
+   # before the opening bracket
+   my $e = $base ? 'R' : 'L';
+   my %close = ('(' => ')', '[' => ']', '{' => '}');
+   my @stack;
+   for my $k (0 .. $#cls) {
+      next unless $cls[$k] eq 'W';
+      my $c = $cells->[$lo + $k]{base};
+      if ($close{$c}) {
+         push @stack, [$k, $close{$c}];
+      } elsif (grep { $_->[1] eq $c } @stack) {
+         # close the innermost matching opener, dropping unmatched ones above
+         pop @stack while $stack[-1][1] ne $c;
+         my $open = (pop @stack)->[0];
+         my %in;
+         for ($open + 1 .. $k - 1) {
+            my $d = $cls[$_] eq 'N' ? 'R' : $cls[$_];
+            $in{$d} = 1 if $d eq 'L' || $d eq 'R';
+         }
+         my $d;
+         if ($in{$e}) { $d = $e }
+         elsif (%in) {
+            my $prev = $e;
+            for (reverse 0 .. $open - 1) {
+               next unless $cls[$_] =~ /^[LRN]$/;
+               $prev = $cls[$_] eq 'L' ? 'L' : 'R';
+               last;
+            }
+            $d = $prev eq $e ? $e : $prev;
+         }
+         next unless $d;
+         for ($open, $k) {
+            $cls[$_] = $d;
+            $lvl[$_] = $d eq 'R' ? 1 : ($base ? 2 : 0);
+         }
+      }
+   }
+
+   # neutrals: direction of the neighbours if they agree, otherwise the base
+   # direction; a number counts as R unless it sits in left-to-right context
+   my $dir = sub {
+      my ($k) = @_;
+      return $cls[$k] if $cls[$k] ne 'N';
+      $lvl[$k] ? 'R' : 'L';
+   };
+   my $i = 0;
+   while ($i <= $#cls) {
+      if ($cls[$i] ne 'W') { $i++; next }
+      my $j = $i;
+      $j++ while $j <= $#cls && $cls[$j] eq 'W';
+      my $before = $i > 0      ? $dir->($i - 1) : ($base ? 'R' : 'L');
+      my $after  = $j <= $#cls ? $dir->($j)     : ($base ? 'R' : 'L');
+      my $level  = $before eq $after
+         ? ($before eq 'R' ? 1 : ($base ? 2 : 0))
+         : $base;
+      $lvl[$_] = $level for $i .. $j - 1;
+      $i = $j;
+   }
+
+   $cells->[$lo + $_]{odd} = $lvl[$_] % 2 for 0 .. $#lvl;
+
+   # L2: reverse every run at or above each level, highest first
+   my @idx = ($lo .. $hi);
+   my $max = 0;
+   $max < $_ and $max = $_ for @lvl;
+   for (my $k = $max; $k >= 1; $k--) {
+      my $s = 0;
+      while ($s <= $#lvl) {
+         if ($lvl[$s] < $k) { $s++; next }
+         my $e = $s;
+         $e++ while $e + 1 <= $#lvl && $lvl[$e + 1] >= $k;
+         @idx[$s .. $e]  = reverse @idx[$s .. $e];
+         @lvl[$s .. $e]  = reverse @lvl[$s .. $e];
+         $s = $e + 1;
+      }
+   }
+
+   [0 .. $lo - 1, @idx, $hi + 1 .. $n - 1];
+}
+
+# vim: tabstop=3 softtabstop=3 shiftwidth=3 expandtab
