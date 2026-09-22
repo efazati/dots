@@ -141,7 +141,7 @@ fi
 alias cat='bat'
 alias catt='bat --style=plain'
 alias less='bat'
-alias nano='vim'
+#alias nano='vim'
 alias wget='wget -c'
 alias tailf='tail -f'
 alias apt='sudo apt'
@@ -668,3 +668,7 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 # export PATH=/usr/local/go/bin:$PATH
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/efazati/.local/bin:$PATH"

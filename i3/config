@@ -115,6 +115,12 @@ exec --no-startup-id "nm-applet &"
 exec --no-startup-id "blueman-applet &"
 exec --no-startup-id "xfce4-clipman &"
 exec --no-startup-id "flameshot &"
+# Synergy 3 service is WantedBy=graphical-session.target, which bare i3 never
+# activates — start it explicitly so the KVM comes up at login.
+exec --no-startup-id "systemctl --user start synergy.service"
+# Mark the main monitor primary (polybar tray lives on the primary bar).
+# Re-runs on i3 reload; harmless no-op if HDMI-A-0 isn't connected.
+exec_always --no-startup-id "xrandr --output HDMI-A-0 --primary"
 # start a terminal
 bindsym $mod+Return exec --no-startup-id warp-terminal
 

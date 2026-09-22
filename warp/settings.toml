@@ -43,6 +43,7 @@ show_conversation_history = true
 show_code_review_button = true
 show_project_explorer = true
 show_global_search = true
+show_hidden_files = false
 
 [warp_drive]
 enabled = true

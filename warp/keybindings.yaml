@@ -1,7 +1,12 @@
-# Warp custom keybindings (~/.config/warp-terminal/keybindings.yaml)
-# Action ids verified against the Warp binary. Keys quoted (colons in keys).
-"terminal:copy": "ctrl-c"
-"terminal:paste": "ctrl-v"
-"pane_group:navigate_prev": "ctrl-shift-left"
-"pane_group:navigate_next": "ctrl-shift-right"
-"pane_group:close_current_session": "ctrl-w"
+---
+"workspace:close_other_tabs": none
+"editor_view:select_left_by_word": none
+"editor_view:select_left_by_subword": none
+"terminal:copy": ctrl-c
+"code_view:close_all_tabs": none
+"editor_view:select_right_by_subword": none
+"pane_group:close_current_session": ctrl-w
+"workspace:activate_prev_tab": ctrl-shift-left
+"workspace:activate_next_tab": ctrl-shift-right
+"editor_view:select_right_by_word": none
+"terminal:paste": ctrl-v

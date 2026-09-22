@@ -68,7 +68,11 @@ ln -s $(realpath ./i3) $HOME/.config/
 ln -s $(realpath ./polybar) $HOME/.config/
 ln -s $(realpath ./rofi) $HOME/.config/
 ln -s $(realpath ./dunst) $HOME/.config/
-ln -s $(realpath ./fontconfig) $HOME/.config/
+# Link the conf file, not the dir: ~/.config/fontconfig usually already exists
+# as a real directory, and then linking the dir silently does nothing.
+mkdir -p $HOME/.config/fontconfig/conf.d
+ln -sf $(realpath ./fontconfig/conf.d/99-persian.conf) $HOME/.config/fontconfig/conf.d/
+fc-cache -f
 
 # Warp terminal — symlink config FILES only (never the whole dir: it also holds
 # warp.sqlite state + user_preferences.json which must stay local, not in git).
