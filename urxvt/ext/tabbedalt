@@ -155,6 +155,13 @@
 #
 # 2023-10-28 16:30:32
 # - Added overlay based dialog to confirm closing urxvt window
+#
+# 2026-09-22
+# - Tab names follow the title set by the shell (OSC 0/1/2), so they change
+#   with the running command / cwd. OSC 1 (icon name, the short "tab" title
+#   oh-my-zsh sends) wins over OSC 0/2. A manual rename pins the name;
+#   renaming to an empty string goes back to automatic titles. Max length via
+#   URxvt.tabbedalt.title-max (default 24, 0 disables auto titles).
 
 use Scalar::Util;
 
@@ -587,6 +594,9 @@ sub init {
    $self->{tab_numbers} =
       ($self->x_resource ('tab-numbers') or 'true') !~ /^(?:false|0|no)/i;
 
+   my $title_max = $self->x_resource ('title-max');
+   $self->{title_max} = defined $title_max ? int $title_max : 24;
+
    ();
 
 }
@@ -771,6 +781,27 @@ sub tab_property_notify {
    ()
 }
 
+sub tab_osc_seq {
+   my ($self, $tab, $op, $args) = @_;
+
+   return () unless $self->{title_max};
+   return () unless $op == 0 || $op == 1 || $op == 2;
+   return () if $tab->{pinned} || $tab->{is_being_renamed};
+   # prefer the short icon-name title once the shell has sent one
+   return () if $op != 1 && $tab->{has_icon_title};
+   $tab->{has_icon_title} = 1 if $op == 1;
+
+   my $name = $tab->locale_decode($args);
+   $name =~ s/[\x00-\x1f]//g;
+   $name = substr($name, 0, $self->{title_max} - 1) . "\x{2026}"
+      if length $name > $self->{title_max};
+   return () if $name eq '' || $name eq ($tab->{name} // '');
+
+   $tab->{name} = $name;
+   $self->refresh;
+   ()
+}
+
 sub tab_line_update {
    my ($self, $tab) = @_;
    my $mark = $self->tab_activity_mark($tab);
@@ -883,7 +914,7 @@ package urxvt::ext::tabbedalt::tab;
          unshift @_, $_[0]{main};
          goto &$name;
       }
-   } qw(start destroy property_notify line_update);
+   } qw(start destroy property_notify line_update osc_seq);
 
    sub enable_hooks {
       my ($self) = @_;
@@ -928,6 +959,8 @@ sub _rename_tab_key_press {
    if ($tab->{is_being_renamed}) {
       if ($keysym == 0xff0d || $keysym == 0xff8d) { # enter
          $tab->{name} = $tab->{new_name};
+         $tab->{pinned} = $tab->{new_name} ne '';
+         $tab->{name} = "shell" unless $tab->{pinned};
          $tab->{is_being_renamed} = 0;
          $tab->disable('key_press');
       } elsif ($keysym == 0xff1b) { # escape

@@ -122,7 +122,7 @@ exec --no-startup-id "systemctl --user start synergy.service"
 # Re-runs on i3 reload; harmless no-op if HDMI-A-0 isn't connected.
 exec_always --no-startup-id "xrandr --output HDMI-A-0 --primary"
 # start a terminal
-bindsym $mod+Return exec --no-startup-id warp-terminal
+bindsym $mod+Return exec --no-startup-id urxvt
 
 # kill focused window
 bindsym $mod+q kill
@@ -322,18 +322,16 @@ focus_follows_mouse yes
 
 # exec_always --no-startup-id xsetroot -solid '#000000'
 
-# Scratchpad (generic: Warp has no per-window instance name, so use i3's own scratchpad)
-# $mod+Shift+x : send focused window to the scratchpad
-# $mod+x : toggle a dropdown Warp terminal in the scratchpad
-bindsym $mod+x exec --no-startup-id ~/bin/warp-scratch.sh
+# Scratchpad: $mod+x toggles a dropdown urxvt (launched on first use)
+for_window [instance="scratchpad_urxvt"] floating enable, resize set 90 ppt 85 ppt, move position center, move scratchpad, scratchpad show
+bindsym $mod+x exec --no-startup-id "pgrep -f '^urxvt -name scratchpad_urxvt' >/dev/null && i3-msg '[instance=scratchpad_urxvt] scratchpad show, resize set 90 ppt 85 ppt, move position center' || urxvt -name scratchpad_urxvt"
 
 ## Spotify
 bindsym $mod+m [con_mark="music"] scratchpad show
 for_window [class="Spotify"] mark "music", move scratchpad
 for_window [class="Spotify"] floating enable, resize set 900px 610px
 bindsym $mod+$mark+m exec --no-startup-id spotify
-# Warp has no `-e <command>` launcher like urxvt; run the lyrics helper in a normal terminal instead
-bindsym $mod+Shift+m exec "warp-terminal"
+bindsym $mod+Shift+m exec --no-startup-id urxvt
 
 ## PulseAudio Volume Control
 bindsym $mod+p [con_mark="pulseaudio"] scratchpad show
