@@ -200,7 +200,7 @@ bindsym $mod+$mark+x fullscreen
 
 bindsym $mod+Tab workspace back_and_forth
 bindsym $mod+z workspace back_and_forth
-bindsym $mod+v move container to workspace back_and_forth
+#bindsym $mod+v move container to workspace back_and_forth
 bindsym $mod+comma  move workspace to output up
 bindsym $mod+period move workspace to output left
 
