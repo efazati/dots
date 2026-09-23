@@ -59,7 +59,9 @@ set $w10 ~:Misc
 # Slack sets class "slack" (lowercase); match case-insensitively.
 assign [class="(?i)^slack$"]  $w6
 # Huddle / video call windows float instead of tiling into the chat tabs.
-for_window [class="(?i)^slack$" title="(?i)huddle|call"] floating enable, resize set 900px 610px, move position center
+# Anchored: for_window re-runs on every title change and the main window's
+# title is the open channel, so an unanchored match floats it too.
+for_window [class="(?i)^slack$" title="^(?i)huddle"] floating enable, resize set 900px 610px, move position center
 assign [class="TelegramDesktop"]       $w6
 assign [class="telegram"]       $w6
 for_window [class="TelegramDesktop"] resize set width 30 ppt
