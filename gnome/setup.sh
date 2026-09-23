@@ -43,7 +43,23 @@ dd window-skip-taskbar true
 # still reaches the shell as ^C unless there is a selection.
 dd shortcut-terminal-copy "['<Ctrl>c', '<Ctrl><Shift>c', 'Copy']"
 dd shortcut-terminal-paste "['<Ctrl>v', '<Ctrl><Shift>v', 'Paste']"
+dd use-system-font false
+dd custom-font "'Monaco 12'"
 rm -rf "$schemas"
+
+# --- Terminal fonts: same faces as urxvt under i3 (../Xdefaults) ---
+# Monaco for Latin, Vazirmatn NL for Persian via ../fontconfig. ddterm has
+# no line spacing setting; Ptyxis does, matching URxvt.lineSpace.
+DOTS=$(cd "$(dirname "$0")/.." && pwd)
+mkdir -p "$HOME/.fonts" "$HOME/.config/fontconfig/conf.d"
+cp "$DOTS"/fonts/monaco.ttf "$DOTS"/fonts/Vazirmatn-NL-*.ttf "$HOME/.fonts/"
+ln -sf "$DOTS/fontconfig/conf.d/99-persian.conf" "$HOME/.config/fontconfig/conf.d/"
+fc-cache -f
+gsettings set org.gnome.Ptyxis use-system-font false
+gsettings set org.gnome.Ptyxis font-name 'Monaco 12'
+for uuid in $(gsettings get org.gnome.Ptyxis profile-uuids | tr -d "[]',"); do
+  gsettings set "org.gnome.Ptyxis.Profile:/org/gnome/Ptyxis/Profiles/$uuid/" cell-height-scale 1.2
+done
 
 # --- Autostart at login (i3: exec code) ---
 mkdir -p "$HOME/.config/autostart"
