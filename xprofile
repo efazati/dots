@@ -1,0 +1,2 @@
+# Force dark GTK theme (i3 has no settings daemon)
+export GTK_THEME=Adwaita:dark

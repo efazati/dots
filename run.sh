@@ -90,6 +90,15 @@ ln -s $(realpath ./images) $HOME/images
 
 ln -s $(realpath ./Xdefaults) $HOME/.Xdefaults
 ln -s $(realpath ./Xresources) $HOME/.Xresources
+
+# Dark GTK theme. i3 runs no settings daemon, so settings.ini alone is not
+# reliably honoured (Thunar stayed light). GTK_THEME forces it: xprofile for
+# the X session (lightdm sources it), environment.d for dbus/systemd-activated
+# apps. Relogin to apply; `thunar -q` first, it reuses a running process.
+ln -sfn $(realpath ./xprofile) $HOME/.xprofile
+mkdir -p $HOME/.config/environment.d
+ln -sfn $(realpath ./environment.d/gtk-theme.conf) $HOME/.config/environment.d/gtk-theme.conf
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
 ln -s $(realpath ./vimrc) $HOME/.vimrc
 ln -s $(realpath ./tmux.conf) $HOME/.tmux.conf
 
