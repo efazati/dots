@@ -110,6 +110,8 @@ ln -s /home/efazati/.screenlayout/1mon.sh $HOME/bin/screen/default.sh
 
 ln -sfn $(realpath ./bin/warp-scratch.sh) $HOME/bin/warp-scratch.sh
 ln -sfn $(realpath ./bin/thunar-scratch.sh) $HOME/bin/thunar-scratch.sh
+# Thunar restoring its own size/position fights the scratchpad centering.
+xfconf-query -c thunar -p /misc-remember-geometry -n -t bool -s false
 
 
 sudo chmod a+rw $OH_ZSH_PATH

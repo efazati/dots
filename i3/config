@@ -331,7 +331,9 @@ for_window [instance="scratchpad_urxvt"] floating enable, resize set 90 ppt 85 p
 bindsym $mod+x exec --no-startup-id "pgrep -f '^urxvt -name scratchpad_urxvt' >/dev/null && i3-msg '[instance=scratchpad_urxvt] scratchpad show, resize set 90 ppt 85 ppt, move position center' || urxvt -name scratchpad_urxvt"
 
 ## Thunar: $mod+Shift+v opens it on first use, then toggles it in/out of view
-for_window [class="Thunar"] floating enable, resize set 80 ppt 80 ppt, move position center, move scratchpad, scratchpad show
+# Only the main window (role Thunar-<id>). Copy progress, rename and properties
+# dialogs share the class and would otherwise vanish into the scratchpad.
+for_window [class="Thunar" window_role="^Thunar-" window_type="normal"] floating enable, mark "files", move scratchpad
 bindsym $mod+Shift+v exec --no-startup-id ~/bin/thunar-scratch.sh
 
 ## Spotify
