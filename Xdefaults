@@ -1,4 +1,4 @@
-URxvt.perl-ext: tabbedalt,font-size,default,matcher,keyboard-select,bidi
+URxvt.perl-ext: tabbedalt,font-size,default,matcher,keyboard-select,bidi,clipboard-keys
 
 ! URxvt.termName: rxvt-256color
 URxvt.background: black
@@ -14,6 +14,13 @@ URxvt.font: xft:monaco:size=12,xft:Vazirmatn NL:size=12
 
 URxvt.keysym.M-Left:    \033[1;5D
 URxvt.keysym.M-Right:    \033[1;5C
+
+! Ctrl+C copies when text is selected, else sends a normal ^C (interrupt).
+! Ctrl+V pastes the clipboard. Ctrl+Shift+V sends a raw ^V (Claude Code image paste).
+URxvt.keysym.Control-c: clipboard-keys:copy
+URxvt.keysym.Control-v: clipboard-keys:paste
+URxvt.keysym.Control-Shift-C: clipboard-keys:copy
+URxvt.keysym.Control-Shift-V: \026
 
 URxvt.tabbedalt.new-button: false
 URxvt.tabbedalt.tab-numbers: true

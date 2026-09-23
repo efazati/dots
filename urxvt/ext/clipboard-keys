@@ -1,0 +1,49 @@
+#! perl
+
+=head1 NAME
+
+clipboard-keys - Ctrl+C / Ctrl+V like every other app
+
+=head1 SYNOPSIS
+
+   URxvt.perl-ext-common: ...,clipboard-keys
+   URxvt.keysym.Control-c: clipboard-keys:copy
+   URxvt.keysym.Control-v: clipboard-keys:paste
+
+=head1 DESCRIPTION
+
+copy: with a selection, copy it to CLIPBOARD and drop the selection, so the
+next Ctrl+C is a normal interrupt again. Without a selection, send ^C.
+
+paste: paste CLIPBOARD (bracketed paste is honoured).
+
+=cut
+
+sub copy {
+   my ($self) = @_;
+   my $text = $self->selection;
+
+   if (length $text) {
+      $self->selection ($text, 1);
+      $self->selection_grab (urxvt::CurrentTime, 1);
+      $self->selection_clear;
+      $self->want_refresh;
+   } else {
+      $self->tt_write ("\x03");
+   }
+
+   1
+}
+
+sub paste {
+   my ($self) = @_;
+   $self->selection_request (urxvt::CurrentTime, 3);
+   1
+}
+
+sub on_action {
+   my ($self, $action) = @_;
+   return copy ($self)  if $action eq "copy";
+   return paste ($self) if $action eq "paste";
+   ()
+}
