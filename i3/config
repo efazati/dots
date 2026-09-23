@@ -44,6 +44,8 @@ assign [class="Goland"]      $w3
 assign [class="code-oss"]      $w3
 assign [class="Cursor"]      $w3
 assign [class="Code"]         $w3
+# Editors always open as tabs, whatever workspace they land on.
+for_window [class="(?i)^(code|code-oss|cursor)$"] layout tabbed
 
 assign [class="^[Zz]oom$"] $w5
 
@@ -54,16 +56,16 @@ set $w8  8:Note
 set $w9  9:Syn
 set $w10 ~:Misc
 
-assign [class="Slack"]  $w6
+# Slack sets class "slack" (lowercase); match case-insensitively.
+assign [class="(?i)^slack$"]  $w6
+# Huddle / video call windows float instead of tiling into the chat tabs.
+for_window [class="(?i)^slack$" title="(?i)huddle|call"] floating enable, resize set 900px 610px, move position center
 assign [class="TelegramDesktop"]       $w6
 assign [class="telegram"]       $w6
 for_window [class="TelegramDesktop"] resize set width 30 ppt
 
 assign [class="signal"]        $w6
 for_window [class="signal"] resize set width 480
-
-assign [class="Todoist"]        $w7
-for_window [class="Todoist"] resize set width 480
 
 assign [class="Sunsama"]    $w7
 
@@ -137,11 +139,10 @@ bindsym $mod+$mark+space exec --no-startup-id rofi  -show handy -modi handy:~/.c
 
 bindsym $mod+F1 exec --no-startup-id firefox
 bindsym $mod+Shift+F1 exec --no-startup-id google-chrome-stable
-bindsym $mod+F5 exec --no-startup-id telegram-desktop
+bindsym $mod+F5 exec --no-startup-id Telegram
 bindsym $mod+F3 [class="Cursor"] focus
 # bindsym $mod+F3 [class="code-oss"] focus
 bindsym $mod+Shift+F3 exec --no-startup-id code
-bindsym $mod+F4 exec --no-startup-id todoist
 bindsym $mod+F2 exec --no-startup-id obsidian
 # bindsym $mod+b exec --no-startup-id  xfce4-screenshooter -c -r
 bindsym $mod+b exec --no-startup-id  flameshot gui
@@ -359,10 +360,9 @@ client.urgent $lightred $red $white $lightred
 exec --no-startup-id "firefox"
 #exec --no-startup-id "doublecmd"
 exec --no-startup-id "slack"
-exec --no-startup-id "telegram-desktop"
+exec --no-startup-id "Telegram"
 exec --no-startup-id "spotify"
 exec --no-startup-id "code"
-exec --no-startup-id "todoist"
 exec --no-startup-id "chromium"
 # Synergy 3 (Electron app at /opt/Synergy/synergy; the old `synergy --minimized`
 # was a Synergy-1 flag that v3 ignores). Launches the GUI/tray on login.

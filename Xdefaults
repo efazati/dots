@@ -9,6 +9,7 @@ URxvt.scrollBar: false
 URxvt.scrollWithBuffer: true
 
 URxvt.font: xft:monaco:size=12,xft:Vazirmatn NL:size=12
+URxvt.lineSpace: 3
 ! URxvt.font: xft:monospace:antialias=true:pixelsize=14
 ! URxvt.font: xft:VictorMonoNerdFontMono-regular.ttf:pixelsize=18
 
