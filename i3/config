@@ -36,7 +36,8 @@ workspace "$w8"   output $screen1
 workspace "$w9"   output $screen1
 workspace "$w0"   output $screen1
 
-assign [class="Thunar"] 	 $w4
+# Thunar lives in the scratchpad now ($mod+Shift+v), see below.
+# assign [class="Thunar"] 	 $w4
 # Code
 assign [class="pycharm"]      $w3
 assign [class="jetbrains-goland"]      $w3
@@ -328,6 +329,10 @@ focus_follows_mouse yes
 # Scratchpad: $mod+x toggles a dropdown urxvt (launched on first use)
 for_window [instance="scratchpad_urxvt"] floating enable, resize set 90 ppt 85 ppt, move position center, move scratchpad, scratchpad show
 bindsym $mod+x exec --no-startup-id "pgrep -f '^urxvt -name scratchpad_urxvt' >/dev/null && i3-msg '[instance=scratchpad_urxvt] scratchpad show, resize set 90 ppt 85 ppt, move position center' || urxvt -name scratchpad_urxvt"
+
+## Thunar: $mod+Shift+v opens it on first use, then toggles it in/out of view
+for_window [class="Thunar"] floating enable, resize set 80 ppt 80 ppt, move position center, move scratchpad, scratchpad show
+bindsym $mod+Shift+v exec --no-startup-id ~/bin/thunar-scratch.sh
 
 ## Spotify
 bindsym $mod+m [con_mark="music"] scratchpad show

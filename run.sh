@@ -109,6 +109,7 @@ mkdir -p $HOME/bin/screen
 ln -s /home/efazati/.screenlayout/1mon.sh $HOME/bin/screen/default.sh
 
 ln -sfn $(realpath ./bin/warp-scratch.sh) $HOME/bin/warp-scratch.sh
+ln -sfn $(realpath ./bin/thunar-scratch.sh) $HOME/bin/thunar-scratch.sh
 
 
 sudo chmod a+rw $OH_ZSH_PATH
