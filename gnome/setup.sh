@@ -39,7 +39,39 @@ dd window-monitor current
 dd hide-when-focus-lost false
 dd window-above true
 dd window-skip-taskbar true
+# ddterm disables its copy action while nothing is selected, so Ctrl+C
+# still reaches the shell as ^C unless there is a selection.
+dd shortcut-terminal-copy "['<Ctrl>c', '<Ctrl><Shift>c', 'Copy']"
+dd shortcut-terminal-paste "['<Ctrl>v', '<Ctrl><Shift>v', 'Paste']"
 rm -rf "$schemas"
+
+# --- Autostart at login (i3: exec code) ---
+mkdir -p "$HOME/.config/autostart"
+cat >"$HOME/.config/autostart/code.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Visual Studio Code
+Exec=code
+X-GNOME-Autostart-enabled=true
+EOF
+
+# --- Synergy: survive logout/login ---
+# On relogin synergy-service can see the previous session's instance, log
+# "existing service detected" and exit 0, which Restart=on-failure ignores.
+# Restart on clean exit too; the start limit stops a real duplicate looping.
+if [ -f /etc/systemd/user/synergy.service ]; then
+  mkdir -p "$HOME/.config/systemd/user/synergy.service.d"
+  cat >"$HOME/.config/systemd/user/synergy.service.d/restart.conf" <<'EOF'
+[Unit]
+StartLimitIntervalSec=120
+StartLimitBurst=10
+
+[Service]
+Restart=always
+RestartSec=3
+EOF
+  systemctl --user daemon-reload
+fi
 
 # --- Workspaces: fixed 10, Super+N / Super+Shift+N ---
 gsettings set org.gnome.mutter dynamic-workspaces false
